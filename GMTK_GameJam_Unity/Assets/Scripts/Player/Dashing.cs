@@ -30,7 +30,7 @@ public class Dashing : MonoBehaviour
         if (!controlState.IsPlayerControlled)
         return;
 
-        if (canDash && Input.GetKeyDown(KeyCode.E))
+        if (canDash && Input.GetKeyDown(KeyCode.LeftControl))
         {
             canDash = false;
             isDashing = true;

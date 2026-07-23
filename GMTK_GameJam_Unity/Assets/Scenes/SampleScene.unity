@@ -838,18 +838,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 542853568}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16f18059c5a0473419e8a6323c3e5c49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterControlState
---- !u!114 &542853575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542853568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5652dd7195474242943135cfd053c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dashing
