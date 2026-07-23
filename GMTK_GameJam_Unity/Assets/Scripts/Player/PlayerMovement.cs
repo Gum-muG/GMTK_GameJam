@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -5,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
     private float speed;
     public float walkSpeed;
     public float sprintSpeed;
+    public float wallRunSpeed;
 
     public float groundDrag;
     public float airDrag;
@@ -38,8 +40,11 @@ public class PlayerMovement : MonoBehaviour
     {
         WALKING,
         SPRINTING,
+        WALL_RUNNING,
         AIR
     }
+
+    public bool wallRunning;
 
     private void Start()
     {
@@ -52,6 +57,12 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
+
+        if(wallRunning)
+        {
+            movementState = MovementState.WALL_RUNNING;
+            speed = wallRunSpeed; 
+        }
 
         if(isGrounded && Input.GetKey(sprintKey))
         {
@@ -122,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
         else 
             rb.AddForce(moveDir.normalized * speed * 10 * airControl, ForceMode.Force);
 
-        rb.useGravity = !OnSlope();
+        if(!wallRunning) rb.useGravity = !OnSlope();
     }
 
     private void Jump()
