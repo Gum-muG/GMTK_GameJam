@@ -65,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
             speed = wallRunSpeed; 
         }
 
-        if(isGrounded && Input.GetKey(sprintKey))
+        else if(isGrounded && Input.GetKey(sprintKey))
         {
             movementState = MovementState.SPRINTING;
             speed = sprintSpeed;
@@ -110,7 +110,19 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         moveDir = forward.forward * yIn + forward.right * xIn;
-
+        //use camera's rotation to set a look dir, use the look dir to apply force in that dir when jumping off wall
+        //change moveDir when wallrunning to not include player rotation so looking away from wall doesn't move you off of wall(wallMoveDir)
+        //get dash working on my end
+        //have seperate wall layers, one for runnable walls, one for non-runnable walls
+        //swapping over and systems in place for timeline
+        //way to spawn in platforms and walls
+        //way to shoot projectiles of some sort(hitscan or otherwise, we can decide later, maybe both)
+        //dodge roll
+        //push
+        //shield
+        //reset item
+        
+        
         if (OnSlope() && !exitingSlope)
         {
             rb.AddForce(GetSlopeTargetMove() * speed * 20f, ForceMode.Force);
