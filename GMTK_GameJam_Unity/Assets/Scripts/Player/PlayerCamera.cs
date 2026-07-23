@@ -8,11 +8,13 @@ public class PlayerCamera : MonoBehaviour
     public Transform playerForward;
     public Transform camHolder;
 
-    private bool clampWallRunYaw;
-    private float wallRunYawCenter;
-    public float wallRunYawLimit = 60f;
+    private bool clampWallRunHorizontal;
+    private float wallRunHorizontalCenter;
 
-    float xRot, yRot;
+    public float wallRunHorizontalLimit = 60f;
+
+    private float verticalRotation;
+    private float horizontalRotation;
 
     private void Start()
     {
@@ -22,43 +24,66 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        float mouseX =
-            Input.GetAxisRaw("Mouse X") *
-            Time.deltaTime *
-            sensitivity;
+        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensitivity;
 
-        float mouseY =
-            Input.GetAxisRaw("Mouse Y") *
-            Time.deltaTime *
-            sensitivity;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensitivity;
 
-        yRot += mouseX;
+        float proposedHorizontalRotation = horizontalRotation + mouseX;
 
-        if (clampWallRunYaw)
+        if (clampWallRunHorizontal)
         {
-            yRot = Mathf.Clamp(
-                yRot,
-                wallRunYawCenter - wallRunYawLimit,
-                wallRunYawCenter + wallRunYawLimit
-            );
+            float currentHorizontalOffset = Mathf.DeltaAngle(wallRunHorizontalCenter, horizontalRotation);
+
+            float proposedHorizontalOffset = Mathf.DeltaAngle(wallRunHorizontalCenter, proposedHorizontalRotation);
+
+            if (currentHorizontalOffset > wallRunHorizontalLimit)
+            {
+                proposedHorizontalOffset = Mathf.Min(proposedHorizontalOffset, currentHorizontalOffset);
+            }
+            else if (currentHorizontalOffset < -wallRunHorizontalLimit)
+            {
+                proposedHorizontalOffset = Mathf.Max(proposedHorizontalOffset, currentHorizontalOffset);
+            }
+            else
+            {
+                proposedHorizontalOffset = Mathf.Clamp(proposedHorizontalOffset, -wallRunHorizontalLimit, wallRunHorizontalLimit);
+            }
+
+            horizontalRotation = wallRunHorizontalCenter + proposedHorizontalOffset;
+        }
+        else
+        {
+            horizontalRotation = proposedHorizontalRotation;
         }
 
-        xRot -= mouseY;
-        xRot = Mathf.Clamp(xRot, -90f, 90f);
+        verticalRotation -= mouseY;
 
-        camHolder.rotation = Quaternion.Euler(xRot, yRot, 0f);
-        playerForward.rotation = Quaternion.Euler(0f, yRot, 0f);
+        verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
+
+        camHolder.rotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
+
+        playerForward.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
     }
 
-    public void BeginWallRunClamp()
+    public void BeginWallRunClamp(Vector3 wallNormal)
     {
-        wallRunYawCenter = yRot;
-        clampWallRunYaw = true;
+        Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
+
+        Vector3 currentHorizontalLookDirection = Vector3.ProjectOnPlane(camHolder.forward, Vector3.up).normalized;
+
+        if (Vector3.Dot(wallDirection, currentHorizontalLookDirection) < 0f)
+        {
+            wallDirection = -wallDirection;
+        }
+
+        wallRunHorizontalCenter = Mathf.Atan2(wallDirection.x, wallDirection.z) * Mathf.Rad2Deg;
+
+        clampWallRunHorizontal = true;
     }
 
     public void EndWallRunClamp()
     {
-        clampWallRunYaw = false;
+        clampWallRunHorizontal = false;
     }
 
     public void FOV(float targetFOV)
@@ -68,10 +93,6 @@ public class PlayerCamera : MonoBehaviour
 
     public void Tilt(float targetTilt)
     {
-        transform.DOLocalRotate(
-            new Vector3(0f, 0f, targetTilt),
-            0.25f
-        );
+        transform.DOLocalRotate(new Vector3(0f, 0f, targetTilt), 0.25f);
     }
 }
-

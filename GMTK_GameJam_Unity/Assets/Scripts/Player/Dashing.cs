@@ -24,13 +24,13 @@ public class Dashing : MonoBehaviour
         controlState = GetComponent<CharacterControlState>();
     }
 
-    // Update is called once per frame
+    // Update is called once per frameaa
     void Update()
     {
         if (!controlState.IsPlayerControlled)
         return;
 
-        if (canDash && Input.GetKeyDown(KeyCode.LeftControl))
+        if (canDash && Input.GetKeyDown(KeyCode.E))
         {
             canDash = false;
             isDashing = true;
@@ -39,6 +39,11 @@ public class Dashing : MonoBehaviour
         if (isDashing && dashTimer > 0)
         {
             dashTimer -= Time.deltaTime;
+        }
+
+        if (isDashing && dashTimer <= 0f)
+        {
+            isDashing = false;
         }
 
         if (!canDash && playerMovement.isGrounded && dashTimer <= 0)
