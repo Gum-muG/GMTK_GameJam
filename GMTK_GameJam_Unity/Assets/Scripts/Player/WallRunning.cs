@@ -32,6 +32,7 @@ public class WallRunning : MonoBehaviour
 
     private bool touchingWall;
     private Vector3 wallHitNormal;
+    float wallStickForce = 30f;
 
     private void Start()
     {
@@ -114,6 +115,7 @@ public class WallRunning : MonoBehaviour
     private void StartWallRun()
     {
         activeWallNormal = wallHitNormal.normalized;
+        playerCamera.SetWallCameraOffset(activeWallNormal);
 
         playerMovement.wallRunning = true;
         wallRunTimer = maxWallRunTime;
@@ -151,7 +153,7 @@ public class WallRunning : MonoBehaviour
 
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
-        rb.AddForce(-activeWallNormal * 100f, ForceMode.Force);
+        rb.AddForce(-activeWallNormal * wallStickForce, ForceMode.Force);
 
         rb.AddForce(transform.up * gravityCounterforce, ForceMode.Force);
     }
@@ -162,6 +164,7 @@ public class WallRunning : MonoBehaviour
         rb.useGravity = true;
 
         playerCamera.EndWallRunClamp();
+        playerCamera.ClearWallCameraOffset();
 
         playerCamera.FOV(70f);
         playerCamera.Tilt(0f);

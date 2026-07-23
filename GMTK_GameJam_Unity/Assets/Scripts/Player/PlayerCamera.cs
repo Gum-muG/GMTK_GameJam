@@ -16,16 +16,22 @@ public class PlayerCamera : MonoBehaviour
     private float verticalRotation;
     private float horizontalRotation;
 
+    public float wallCameraOffset = 0.25f;
+
+    private Vector3 normalLocalPosition, activeWallNormal;
+    private bool wallCameraOffsetActive;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        normalLocalPosition = transform.localPosition;
     }
 
     private void Update()
     {
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensitivity;
-
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensitivity;
 
         float proposedHorizontalRotation = horizontalRotation + mouseX;
@@ -33,7 +39,6 @@ public class PlayerCamera : MonoBehaviour
         if (clampWallRunHorizontal)
         {
             float currentHorizontalOffset = Mathf.DeltaAngle(wallRunHorizontalCenter, horizontalRotation);
-
             float proposedHorizontalOffset = Mathf.DeltaAngle(wallRunHorizontalCenter, proposedHorizontalRotation);
 
             if (currentHorizontalOffset > wallRunHorizontalLimit)
@@ -57,18 +62,36 @@ public class PlayerCamera : MonoBehaviour
         }
 
         verticalRotation -= mouseY;
-
         verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
 
         camHolder.rotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
-
         playerForward.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
+
+        Vector3 targetLocalPosition = normalLocalPosition;
+
+        if (wallCameraOffsetActive && transform.parent != null)
+        {
+            Vector3 localWallNormal = transform.parent.InverseTransformDirection(activeWallNormal);
+            targetLocalPosition += localWallNormal * wallCameraOffset;
+        }
+
+        transform.localPosition = targetLocalPosition;
+    }
+
+    public void SetWallCameraOffset(Vector3 wallNormal)
+    {
+        activeWallNormal = wallNormal.normalized;
+        wallCameraOffsetActive = true;
+    }
+
+    public void ClearWallCameraOffset()
+    {
+        wallCameraOffsetActive = false;
     }
 
     public void BeginWallRunClamp(Vector3 wallNormal)
     {
         Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
-
         Vector3 currentHorizontalLookDirection = Vector3.ProjectOnPlane(camHolder.forward, Vector3.up).normalized;
 
         if (Vector3.Dot(wallDirection, currentHorizontalLookDirection) < 0f)
@@ -77,7 +100,6 @@ public class PlayerCamera : MonoBehaviour
         }
 
         wallRunHorizontalCenter = Mathf.Atan2(wallDirection.x, wallDirection.z) * Mathf.Rad2Deg;
-
         clampWallRunHorizontal = true;
     }
 
