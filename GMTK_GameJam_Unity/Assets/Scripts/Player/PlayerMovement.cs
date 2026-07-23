@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDir;
 
     Rigidbody rb;
+    private CharacterControlState controlState;
 
     public MovementState movementState;
 
@@ -51,11 +52,18 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+
+        //getting components
+        controlState = GetComponent<CharacterControlState>();
     }
 
     private void Update()
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
+        
+        if (!controlState.IsPlayerControlled)
+        return;
+
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
 
@@ -109,6 +117,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!controlState.IsPlayerControlled)
+        return;
+
         moveDir = forward.forward * yIn + forward.right * xIn;
         //use camera's rotation to set a look dir, use the look dir to apply force in that dir when jumping off wall
         //change moveDir when wallrunning to not include player rotation so looking away from wall doesn't move you off of wall(wallMoveDir)
