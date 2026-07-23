@@ -45,17 +45,6 @@ public class WallRunning : MonoBehaviour
         if (!controlState.IsPlayerControlled)
             return;
 
-        if (touchingWall && AboveMinHeight() && Input.GetKeyDown(KeyCode.Space) && !playerMovement.wallRunning && !exitingWall)
-        {
-            Vector3 forceToApply = transform.up * wallJumpUpForce + wallHitNormal.normalized * wallJumpSideForce;
-
-            rb.linearVelocity = Vector3.zero;
-
-            touchingWall = false;
-
-            rb.AddForce(forceToApply, ForceMode.Impulse);
-        }
-
         StateMachine();
     }
 
@@ -68,11 +57,6 @@ public class WallRunning : MonoBehaviour
         {
             WallRun();
         }
-    }
-
-    private bool AboveMinHeight()
-    {
-        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, Ground);
     }
 
     private void StateMachine()
@@ -111,7 +95,7 @@ public class WallRunning : MonoBehaviour
                 return;
             }
         }
-        else if (touchingWall && yIn > 0f && AboveMinHeight() && !exitingWall)
+        else if (touchingWall && yIn > 0f && !playerMovement.isGrounded && !exitingWall)
         {
             StartWallRun();
         }
@@ -140,7 +124,7 @@ public class WallRunning : MonoBehaviour
 
         playerCamera.FOV(90f);
 
-        bool wallIsOnRight = Vector3.Dot(activeWallNormal, transform.right) < 0f;
+        bool wallIsOnRight = Vector3.Dot(activeWallNormal, forward.right) < 0f;
 
         if (wallIsOnRight)
         {
