@@ -59,10 +59,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
-        
-        if (!controlState.IsPlayerControlled)
+        if (!controlState.IsPlayerControlled){
         return;
+        }
+
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
 
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
@@ -121,6 +122,10 @@ public class PlayerMovement : MonoBehaviour
         return;
 
         moveDir = forward.forward * yIn + forward.right * xIn;
+
+        if (wallRunning){
+            moveDir = Vector3.zero;
+        }
         //use camera's rotation to set a look dir, use the look dir to apply force in that dir when jumping off wall
         //change moveDir when wallrunning to not include player rotation so looking away from wall doesn't move you off of wall(wallMoveDir)
         //get dash working on my end
@@ -167,11 +172,12 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool OnSlope()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f, groundLayer, QueryTriggerInteraction.Ignore))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
         }
+
         return false;
     }
     private Vector3 GetSlopeTargetMove()
