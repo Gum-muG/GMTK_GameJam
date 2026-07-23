@@ -1112,7 +1112,6 @@ MonoBehaviour:
   replayContainer: {fileID: 11400000, guid: b17a4f9d71691d54db4da29251654d23, type: 2}
   currentState: 0
   snapshotDelta: 0.05
---- !u!1 &954927848
 --- !u!1 &954927848 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1156150022688418778, guid: c82e86d360efaf44cac32512936df62e, type: 3}
