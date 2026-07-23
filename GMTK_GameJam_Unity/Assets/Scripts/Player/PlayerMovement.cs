@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed;
     public float sprintSpeed;
     public float wallRunSpeed;
+    public float dashSpeed;
 
     public float groundDrag;
     public float airDrag;
@@ -20,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float playerHeight;
     public LayerMask groundLayer;
-    bool isGrounded;
+    public bool isGrounded;
 
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
