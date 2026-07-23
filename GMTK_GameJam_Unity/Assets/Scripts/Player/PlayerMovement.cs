@@ -84,14 +84,6 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(ResetJump), 0.1f);
         }
 
-        if(Input.GetKeyUp(KeyCode.Space))
-        {
-            if (rb.linearVelocity.y > 0)
-            {
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            }
-        }
-
         if (OnSlope() && !exitingSlope)
         {
             if (rb.linearVelocity.magnitude > speed)
