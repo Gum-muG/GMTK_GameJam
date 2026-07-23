@@ -1,12 +1,13 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IReplayObject
 {
     private float speed;
     public float walkSpeed;
     public float sprintSpeed;
     public float wallRunSpeed;
+    [Tooltip("Test")]
     public float dashSpeed;
 
     public float groundDrag;
@@ -55,6 +56,8 @@ public class PlayerMovement : MonoBehaviour
 
         //getting components
         controlState = GetComponent<CharacterControlState>();
+
+        ReplayManager.instance.Register(this);
     }
 
     private void Update()
@@ -179,4 +182,19 @@ public class PlayerMovement : MonoBehaviour
         return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
     }
 
+    public SnapshotInfo SaveSnapshot()
+    {
+        PlayerSnapshotInfo playerSnapshotInfo = new PlayerSnapshotInfo()
+        {
+            position = transform.position,
+            rotation = forward.rotation,
+            state = movementState
+        };
+        return playerSnapshotInfo;
+    }
+
+    public void LoadSnapshot(SnapshotInfo info)
+    {
+        throw new System.NotImplementedException();
+    }
 }
