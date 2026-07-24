@@ -4,7 +4,7 @@ public class ProjectileShooter : MonoBehaviour
 {
     public GameObject projectilePrefab;
     public Transform firePoint;
-    public Transform cameraTransform;
+    public Transform aimTransform;
 
     public float projectileSpeed = 30f;
     public float fireCooldown = 0.25f;
@@ -17,22 +17,54 @@ public class ProjectileShooter : MonoBehaviour
         {
             fireCooldownTimer -= Time.deltaTime;
         }
-
-        if (Input.GetMouseButtonDown(0) && fireCooldownTimer <= 0f)
-        {
-            FireProjectile();
-        }
     }
 
-    private void FireProjectile()
+    public void FireProjectile()
     {
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(cameraTransform.forward));
+        if (fireCooldownTimer > 0f)
+        {
+            return;
+        }
+
+        Vector3 direction = aimTransform.forward;
+
+        GameObject projectile = Instantiate(
+            projectilePrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction)
+        );
 
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 
         if (projectileRb != null)
         {
-            projectileRb.linearVelocity = cameraTransform.forward * projectileSpeed;
+            projectileRb.linearVelocity = direction * projectileSpeed;
+        }
+
+        fireCooldownTimer = fireCooldown;
+    }
+
+    public void FireProjectileAt(Transform target)
+    {
+        if (fireCooldownTimer > 0f || target == null)
+        {
+            return;
+        }
+
+        Vector3 targetPosition = target.position + Vector3.up * 1.5f;
+        Vector3 direction = (targetPosition - firePoint.position).normalized;
+
+        GameObject projectile = Instantiate(
+            projectilePrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction)
+        );
+
+        Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+
+        if (projectileRb != null)
+        {
+            projectileRb.linearVelocity = direction * projectileSpeed;
         }
 
         fireCooldownTimer = fireCooldown;
