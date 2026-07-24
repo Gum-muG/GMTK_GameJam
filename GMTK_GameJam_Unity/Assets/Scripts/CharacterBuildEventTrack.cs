@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Stores timed platform/wall construction events for one character.
-/// </summary>
 [DisallowMultipleComponent]
 public class CharacterBuildEventTrack : MonoBehaviour
 {
@@ -23,7 +20,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
     public bool IsPlayingBack => isPlayingBack;
     public bool HasEvents => events.Count > 0;
 
-    public void BeginRecording(PlatformSpawner spawner)
+    public void BeginNewRecording(PlatformSpawner spawner)
     {
         platformSpawner = spawner;
 
@@ -35,15 +32,37 @@ public class CharacterBuildEventTrack : MonoBehaviour
         isPlayingBack = false;
     }
 
-    public void BeginPlayback(PlatformSpawner spawner)
+    // Preserves existing events and resumes appending new events.
+    public void ResumeRecording(PlatformSpawner spawner)
     {
         platformSpawner = spawner;
+        isRecording = true;
+        isPlayingBack = false;
+    }
 
-        ClearSpawnedObjects();
-        nextEventIndex = 0;
+    public void BeginRecording(PlatformSpawner spawner)
+    {
+        BeginNewRecording(spawner);
+    }
+
+    // Starts processing future events after startTime.
+    // World reconstruction is handled separately by RebuildWorldUpTo.
+    public void BeginPlayback(
+        PlatformSpawner spawner,
+        float startTime)
+    {
+        platformSpawner = spawner;
+        nextEventIndex = FindFirstEventAfter(startTime);
 
         isRecording = false;
         isPlayingBack = true;
+    }
+
+    public void BeginPlayback(PlatformSpawner spawner)
+    {
+        ClearSpawnedObjects();
+        RebuildWorldUpTo(spawner, 0f);
+        BeginPlayback(spawner, 0f);
     }
 
     public void Stop()
@@ -65,14 +84,15 @@ public class CharacterBuildEventTrack : MonoBehaviour
             return false;
         }
 
-        BuildReplayEventData newEvent = new BuildReplayEventData
-        {
-            time = timelineTime,
-            objectId = objectId,
-            buildType = buildType,
-            position = position,
-            rotation = rotation
-        };
+        BuildReplayEventData newEvent =
+            new BuildReplayEventData
+            {
+                time = timelineTime,
+                objectId = objectId,
+                buildType = buildType,
+                position = position,
+                rotation = rotation
+            };
 
         events.Add(newEvent);
 
@@ -99,12 +119,33 @@ public class CharacterBuildEventTrack : MonoBehaviour
         }
     }
 
+
+    // Reconstructs this track's construction state
+    public void RebuildWorldUpTo(
+        PlatformSpawner spawner,
+        float timelineTime)
+    {
+        platformSpawner = spawner;
+        ClearSpawnedObjects();
+
+        nextEventIndex = 0;
+
+        while (nextEventIndex < events.Count &&
+               events[nextEventIndex].time <= timelineTime)
+        {
+            ReplayBuildEvent(events[nextEventIndex]);
+            nextEventIndex++;
+        }
+    }
+
     public void ClearSpawnedObjects()
     {
         foreach (GameObject spawnedObject in spawnedObjects.Values)
         {
             if (spawnedObject != null)
             {
+                // Disable immediately so an object being rebuilt during swap cannot collide for the rest of this frame.
+                spawnedObject.SetActive(false);
                 Destroy(spawnedObject);
             }
         }
@@ -112,12 +153,27 @@ public class CharacterBuildEventTrack : MonoBehaviour
         spawnedObjects.Clear();
     }
 
-    private void ReplayBuildEvent(BuildReplayEventData replayEvent)
+    private int FindFirstEventAfter(float timelineTime)
+    {
+        int index = 0;
+
+        while (index < events.Count &&
+               events[index].time <= timelineTime)
+        {
+            index++;
+        }
+
+        return index;
+    }
+
+    private void ReplayBuildEvent(
+        BuildReplayEventData replayEvent)
     {
         if (platformSpawner == null)
         {
             Debug.LogError(
                 $"{name}: CharacterBuildEventTrack needs a PlatformSpawner.");
+
             return;
         }
 
@@ -126,15 +182,17 @@ public class CharacterBuildEventTrack : MonoBehaviour
             return;
         }
 
-        GameObject spawnedObject = platformSpawner.SpawnRecorded(
-            replayEvent.buildType,
-            replayEvent.position,
-            replayEvent.rotation,
-            replayEvent.objectId);
+        GameObject spawnedObject =
+            platformSpawner.SpawnRecorded(
+                replayEvent.buildType,
+                replayEvent.position,
+                replayEvent.rotation,
+                replayEvent.objectId);
 
         if (spawnedObject != null)
         {
-            spawnedObjects[replayEvent.objectId] = spawnedObject;
+            spawnedObjects[replayEvent.objectId] =
+                spawnedObject;
         }
     }
 }

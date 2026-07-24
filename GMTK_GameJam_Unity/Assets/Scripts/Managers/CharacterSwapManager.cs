@@ -1,9 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Records the controlled character while replaying the counterpart.
-/// </summary>
 [DefaultExecutionOrder(-100)]
 public class CharacterSwapManager : MonoBehaviour
 {
@@ -35,12 +31,18 @@ public class CharacterSwapManager : MonoBehaviour
     [Header("Timeline")]
     [SerializeField] private PlayableCharacter startingCharacter =
         PlayableCharacter.Ice;
+
     [SerializeField] private bool startAutomatically = true;
     [SerializeField] private bool hideUnrecordedCounterpart = true;
 
     [Tooltip(
+        "Zero or less means no limit. Otherwise each character cursor stops " +
+        "at this timeline time.")]
+    [SerializeField] private float levelDuration = 60f;
+
+    [Tooltip(
         "Prevents the two character bodies from launching each other when " +
-        "they occupy the same recorded position.")]
+        "their timeline positions overlap.")]
     [SerializeField] private bool ignoreCharacterCollisions = true;
 
     [Header("Controls")]
@@ -56,7 +58,14 @@ public class CharacterSwapManager : MonoBehaviour
     private PlayableCharacter activeCharacter;
     private bool timelineRunning;
 
-    public float CurrentTime { get; private set; }
+    private float iceTime;
+    private float fireTime;
+
+    public float CurrentTime =>
+        GetCharacterTime(activeCharacter);
+
+    public float IceTime => iceTime;
+    public float FireTime => fireTime;
 
     public bool IsRecording =>
         timelineRunning &&
@@ -64,7 +73,8 @@ public class CharacterSwapManager : MonoBehaviour
         recordingTrack.CurrentState ==
             CharacterReplayTrack.TrackState.Record;
 
-    public PlayableCharacter ActiveCharacter => activeCharacter;
+    public PlayableCharacter ActiveCharacter =>
+        activeCharacter;
 
     private void Awake()
     {
@@ -115,17 +125,37 @@ public class CharacterSwapManager : MonoBehaviour
             return;
         }
 
-        CurrentTime += Time.fixedDeltaTime;
+        float previousTime = CurrentTime;
+        float nextTime =
+            previousTime + Time.fixedDeltaTime;
 
+        if (levelDuration > 0f)
+        {
+            nextTime =
+                Mathf.Min(nextTime, levelDuration);
+        }
+
+        SetCharacterTime(activeCharacter, nextTime);
+
+        float elapsedTime = nextTime - previousTime;
+
+        if (elapsedTime <= 0f)
+        {
+            return;
+        }
+
+        // Record the active character at its own cursor.
         recordingTrack.RecordStep(
-            CurrentTime,
-            Time.fixedDeltaTime);
+            nextTime,
+            elapsedTime);
 
-        playbackTrack?.PlaybackStep(CurrentTime);
-        playbackBuildTrack?.ProcessEventsUpTo(CurrentTime);
+        // The counterpart is sampled at that same absolute timeline time.
+        playbackTrack?.PlaybackStep(nextTime);
+        playbackBuildTrack?.ProcessEventsUpTo(nextTime);
     }
 
-    public void StartTimeline(PlayableCharacter character)
+    public void StartTimeline(
+        PlayableCharacter character)
     {
         if (!ValidateReferences())
         {
@@ -133,7 +163,8 @@ public class CharacterSwapManager : MonoBehaviour
         }
 
         activeCharacter = character;
-        CurrentTime = 0f;
+        iceTime = 0f;
+        fireTime = 0f;
         timelineRunning = true;
 
         ClearAllSpawnedBuildObjects();
@@ -152,11 +183,14 @@ public class CharacterSwapManager : MonoBehaviour
 
         EnsureCharacterRootActive(activeTrack);
 
-        ResetBodyForRecording(GetBody(activeCharacter));
-        activeTrack.BeginRecording();
-        activeBuildTrack.BeginRecording(platformSpawner);
+        ResetBodyForRecording(
+            GetBody(activeCharacter));
+
+        activeTrack.BeginNewRecording();
+        activeBuildTrack.BeginNewRecording(platformSpawner);
 
         inactiveTrack.Stop();
+        inactiveTrack.RestoreStartingPose();
         inactiveBuildTrack.Stop();
 
         recordingTrack = activeTrack;
@@ -179,11 +213,11 @@ public class CharacterSwapManager : MonoBehaviour
         recordingTrack?.Stop();
         recordingBuildTrack?.Stop();
 
-        PlayableCharacter previousCharacter = activeCharacter;
-        activeCharacter = GetOtherCharacter(activeCharacter);
+        PlayableCharacter previousCharacter =
+            activeCharacter;
 
-        ClearAllSpawnedBuildObjects();
-        CurrentTime = 0f;
+        activeCharacter =
+            GetOtherCharacter(activeCharacter);
 
         CharacterReplayTrack newRecordingTrack =
             GetReplayTrack(activeCharacter);
@@ -200,19 +234,41 @@ public class CharacterSwapManager : MonoBehaviour
         EnsureCharacterRootActive(newRecordingTrack);
         EnsureCharacterRootActive(newPlaybackTrack);
 
-        // Clear old physics before moving either character to t = 0.
-        ResetBodyForRecording(GetBody(activeCharacter));
-        FreezeBodyForPlayback(GetBody(previousCharacter));
+        float resumeTime =
+            GetCharacterTime(activeCharacter);
 
-        // The newly controlled character starts a replacement take.
-        newRecordingTrack.BeginRecording();
-        newRecordingBuildTrack.BeginRecording(platformSpawner);
+        // The first time a character becomes active, its cursor is zero and it begins a fresh take. Later swaps resume its existing take.
+        bool resumingExistingTake =
+            newRecordingTrack.HasRecording;
+
+        if (!resumingExistingTake)
+        {
+            SetCharacterTime(activeCharacter, 0f);
+            resumeTime = 0f;
+
+            newRecordingTrack.BeginNewRecording();
+            newRecordingBuildTrack.BeginNewRecording(
+                platformSpawner);
+        }
+        else
+        {
+            newRecordingTrack.ResumeRecording(resumeTime);
+            newRecordingBuildTrack.ResumeRecording(
+                platformSpawner);
+        }
+
+        ResetBodyForRecording(
+            GetBody(activeCharacter));
 
         if (newPlaybackTrack.HasRecording)
         {
-            newPlaybackTrack.BeginPlayback();
-            newPlaybackBuildTrack.BeginPlayback(platformSpawner);
-            newPlaybackBuildTrack.ProcessEventsUpTo(0f);
+            FreezeBodyForPlayback(
+                GetBody(previousCharacter));
+
+            newPlaybackTrack.BeginPlayback(resumeTime);
+            newPlaybackBuildTrack.BeginPlayback(
+                platformSpawner,
+                resumeTime);
 
             playbackTrack = newPlaybackTrack;
             playbackBuildTrack = newPlaybackBuildTrack;
@@ -229,36 +285,68 @@ public class CharacterSwapManager : MonoBehaviour
         recordingTrack = newRecordingTrack;
         recordingBuildTrack = newRecordingBuildTrack;
 
+        // Reconstruct construction from both character histories at the newly controlled character's saved absolute timeline position.
+        RebuildWorldAt(resumeTime);
+
         ApplyCharacterModes();
     }
 
     public void RestartCurrentTake()
     {
-        if (!timelineRunning ||
-            recordingTrack == null ||
-            recordingBuildTrack == null)
+        if (!timelineRunning)
         {
             return;
         }
 
-        ClearAllSpawnedBuildObjects();
-        CurrentTime = 0f;
+        SetCharacterTime(activeCharacter, 0f);
 
-        ResetBodyForRecording(GetBody(activeCharacter));
+        CharacterReplayTrack activeTrack =
+            GetReplayTrack(activeCharacter);
 
-        recordingTrack.BeginRecording();
-        recordingBuildTrack.BeginRecording(platformSpawner);
+        CharacterBuildEventTrack activeBuildTrack =
+            GetBuildTrack(activeCharacter);
 
-        if (playbackTrack != null && playbackTrack.HasRecording)
+        CharacterReplayTrack counterpartTrack =
+            GetReplayTrack(
+                GetOtherCharacter(activeCharacter));
+
+        CharacterBuildEventTrack counterpartBuildTrack =
+            GetBuildTrack(
+                GetOtherCharacter(activeCharacter));
+
+        ResetBodyForRecording(
+            GetBody(activeCharacter));
+
+        activeTrack.BeginNewRecording();
+        activeBuildTrack.BeginNewRecording(platformSpawner);
+
+        if (counterpartTrack.HasRecording)
         {
             FreezeBodyForPlayback(
-                GetBody(GetOtherCharacter(activeCharacter)));
+                GetBody(
+                    GetOtherCharacter(activeCharacter)));
 
-            playbackTrack.BeginPlayback();
-            playbackBuildTrack?.BeginPlayback(platformSpawner);
-            playbackBuildTrack?.ProcessEventsUpTo(0f);
+            counterpartTrack.BeginPlayback(0f);
+            counterpartBuildTrack.BeginPlayback(
+                platformSpawner,
+                0f);
+
+            playbackTrack = counterpartTrack;
+            playbackBuildTrack = counterpartBuildTrack;
+        }
+        else
+        {
+            counterpartTrack.Stop();
+            counterpartBuildTrack.Stop();
+
+            playbackTrack = null;
+            playbackBuildTrack = null;
         }
 
+        recordingTrack = activeTrack;
+        recordingBuildTrack = activeBuildTrack;
+
+        RebuildWorldAt(0f);
         ApplyCharacterModes();
     }
 
@@ -272,8 +360,13 @@ public class CharacterSwapManager : MonoBehaviour
         recordingBuildTrack?.Stop();
         playbackBuildTrack?.Stop();
 
-        SetControlScriptsEnabled(iceControlScripts, false);
-        SetControlScriptsEnabled(fireControlScripts, false);
+        SetControlScriptsEnabled(
+            iceControlScripts,
+            false);
+
+        SetControlScriptsEnabled(
+            fireControlScripts,
+            false);
     }
 
     public bool RecordBuildEvent(
@@ -283,7 +376,8 @@ public class CharacterSwapManager : MonoBehaviour
         Quaternion rotation,
         GameObject spawnedObject)
     {
-        if (!IsRecording || recordingBuildTrack == null)
+        if (!IsRecording ||
+            recordingBuildTrack == null)
         {
             return false;
         }
@@ -295,6 +389,17 @@ public class CharacterSwapManager : MonoBehaviour
             position,
             rotation,
             spawnedObject);
+    }
+
+    private void RebuildWorldAt(float timelineTime)
+    {
+        iceBuildEventTrack.RebuildWorldUpTo(
+            platformSpawner,
+            timelineTime);
+
+        fireBuildEventTrack.RebuildWorldUpTo(
+            platformSpawner,
+            timelineTime);
     }
 
     private void ApplyCharacterModes()
@@ -345,12 +450,15 @@ public class CharacterSwapManager : MonoBehaviour
         bool controlled,
         bool visible)
     {
-        if (track != null && track.gameObject.activeSelf != visible)
+        if (track != null &&
+            track.gameObject.activeSelf != visible)
         {
             track.gameObject.SetActive(visible);
         }
 
-        SetControlScriptsEnabled(controlScripts, controlled);
+        SetControlScriptsEnabled(
+            controlScripts,
+            controlled);
 
         if (cameraRig != null)
         {
@@ -388,7 +496,8 @@ public class CharacterSwapManager : MonoBehaviour
         }
     }
 
-    private static void ResetBodyForRecording(Rigidbody body)
+    private static void ResetBodyForRecording(
+        Rigidbody body)
     {
         if (body == null)
         {
@@ -402,7 +511,8 @@ public class CharacterSwapManager : MonoBehaviour
         body.WakeUp();
     }
 
-    private static void FreezeBodyForPlayback(Rigidbody body)
+    private static void FreezeBodyForPlayback(
+        Rigidbody body)
     {
         if (body == null)
         {
@@ -421,16 +531,19 @@ public class CharacterSwapManager : MonoBehaviour
 
     private void IgnoreCollisionsBetweenCharacters()
     {
-        if (iceReplayTrack == null || fireReplayTrack == null)
+        if (iceReplayTrack == null ||
+            fireReplayTrack == null)
         {
             return;
         }
 
         Collider[] iceColliders =
-            iceReplayTrack.GetComponentsInChildren<Collider>(true);
+            iceReplayTrack.GetComponentsInChildren<Collider>(
+                true);
 
         Collider[] fireColliders =
-            fireReplayTrack.GetComponentsInChildren<Collider>(true);
+            fireReplayTrack.GetComponentsInChildren<Collider>(
+                true);
 
         foreach (Collider iceCollider in iceColliders)
         {
@@ -454,16 +567,20 @@ public class CharacterSwapManager : MonoBehaviour
 
     private void ResolveEventTracks()
     {
-        if (iceBuildEventTrack == null && iceReplayTrack != null)
+        if (iceBuildEventTrack == null &&
+            iceReplayTrack != null)
         {
             iceBuildEventTrack =
-                iceReplayTrack.GetComponent<CharacterBuildEventTrack>();
+                iceReplayTrack.GetComponent<
+                    CharacterBuildEventTrack>();
         }
 
-        if (fireBuildEventTrack == null && fireReplayTrack != null)
+        if (fireBuildEventTrack == null &&
+            fireReplayTrack != null)
         {
             fireBuildEventTrack =
-                fireReplayTrack.GetComponent<CharacterBuildEventTrack>();
+                fireReplayTrack.GetComponent<
+                    CharacterBuildEventTrack>();
         }
     }
 
@@ -473,7 +590,8 @@ public class CharacterSwapManager : MonoBehaviour
 
         bool valid = true;
 
-        if (iceReplayTrack == null || fireReplayTrack == null)
+        if (iceReplayTrack == null ||
+            fireReplayTrack == null)
         {
             Debug.LogError(
                 "Assign both character replay tracks.");
@@ -508,23 +626,12 @@ public class CharacterSwapManager : MonoBehaviour
             valid = false;
         }
 
-        ValidateControlScriptOwnership(
-            iceControlScripts,
-            iceReplayTrack,
-            "Ice");
-
-        ValidateControlScriptOwnership(
-            fireControlScripts,
-            fireReplayTrack,
-            "Fire");
-
         if (iceCameraRig != null &&
             fireCameraRig != null &&
             iceCameraRig == fireCameraRig)
         {
             Debug.LogError(
-                "Ice Camera Rig and Fire Camera Rig reference the same " +
-                "GameObject. Use separate rigs or a shared-camera controller.");
+                "Ice Camera Rig and Fire Camera Rig reference the same object.");
 
             valid = false;
         }
@@ -532,40 +639,28 @@ public class CharacterSwapManager : MonoBehaviour
         return valid;
     }
 
-    private static void ValidateControlScriptOwnership(
-        MonoBehaviour[] scripts,
-        CharacterReplayTrack expectedTrack,
-        string characterName)
+    private float GetCharacterTime(
+        PlayableCharacter character)
     {
-        if (scripts == null || expectedTrack == null)
-        {
-            return;
-        }
-
-        Transform expectedRoot = expectedTrack.transform;
-
-        foreach (MonoBehaviour script in scripts)
-        {
-            if (script == null)
-            {
-                continue;
-            }
-
-            if (!script.transform.IsChildOf(expectedRoot) &&
-                script.transform != expectedRoot)
-            {
-                Debug.LogWarning(
-                    $"{characterName} Control Scripts contains " +
-                    $"{script.name}/{script.GetType().Name}, but that " +
-                    "component is not under the expected character root.");
-            }
-        }
+        return character == PlayableCharacter.Ice
+            ? iceTime
+            : fireTime;
     }
 
-    private void ClearAllSpawnedBuildObjects()
+    private void SetCharacterTime(
+        PlayableCharacter character,
+        float time)
     {
-        iceBuildEventTrack?.ClearSpawnedObjects();
-        fireBuildEventTrack?.ClearSpawnedObjects();
+        time = Mathf.Max(0f, time);
+
+        if (character == PlayableCharacter.Ice)
+        {
+            iceTime = time;
+        }
+        else
+        {
+            fireTime = time;
+        }
     }
 
     private CharacterReplayTrack GetReplayTrack(
@@ -584,7 +679,8 @@ public class CharacterSwapManager : MonoBehaviour
             : fireBuildEventTrack;
     }
 
-    private Rigidbody GetBody(PlayableCharacter character)
+    private Rigidbody GetBody(
+        PlayableCharacter character)
     {
         return character == PlayableCharacter.Ice
             ? iceBody
@@ -602,9 +698,16 @@ public class CharacterSwapManager : MonoBehaviour
     private static void EnsureCharacterRootActive(
         CharacterReplayTrack track)
     {
-        if (track != null && !track.gameObject.activeSelf)
+        if (track != null &&
+            !track.gameObject.activeSelf)
         {
             track.gameObject.SetActive(true);
         }
+    }
+
+    private void ClearAllSpawnedBuildObjects()
+    {
+        iceBuildEventTrack?.ClearSpawnedObjects();
+        fireBuildEventTrack?.ClearSpawnedObjects();
     }
 }

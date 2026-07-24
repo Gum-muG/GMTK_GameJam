@@ -1,13 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// A self-contained snapshot track for one character.
-///
-/// It deliberately uses the same IReplayObject, SnapshotData, SnapshotInfo,
-/// and ReplayContainer types as ReplayManager, while keeping its own state.
-/// This allows one character track to record while another plays back.
-/// </summary>
 [DisallowMultipleComponent]
 public class CharacterReplayTrack : MonoBehaviour
 {
@@ -58,8 +51,6 @@ public class CharacterReplayTrack : MonoBehaviour
 
     private void Start()
     {
-        // Covers script execution orders where child replay components register
-        // after this component's Awake.
         if (discoverReplayObjectsInChildren)
         {
             DiscoverReplayObjects();
@@ -81,7 +72,8 @@ public class CharacterReplayTrack : MonoBehaviour
         replayObjects.Remove(replayObject);
     }
 
-    public void BeginRecording()
+    // Clears this character's previous take and starts again at time zero.
+    public void BeginNewRecording()
     {
         EnsureContainer();
         replayContainer.Init();
@@ -94,9 +86,30 @@ public class CharacterReplayTrack : MonoBehaviour
         HasRecording = false;
         CurrentState = TrackState.Record;
 
-        // Capture t = 0, matching the existing ReplayManager behavior.
         TakeSnapshot(0f);
         HasRecording = true;
+    }
+
+    // Resumes this character at its already-recorded timeline cursor.
+    // Existing snapshots are preserved.
+    public void ResumeRecording(float timelineTime)
+    {
+        if (!HasRecording)
+        {
+            BeginNewRecording();
+            return;
+        }
+
+        SeekTo(timelineTime);
+
+        snapshotAccumulator = 0f;
+        RecordedDuration = Mathf.Max(RecordedDuration, timelineTime);
+        CurrentState = TrackState.Record;
+    }
+
+    public void BeginRecording()
+    {
+        BeginNewRecording();
     }
 
     public void RecordStep(float timelineTime, float deltaTime)
@@ -107,9 +120,8 @@ public class CharacterReplayTrack : MonoBehaviour
         }
 
         snapshotAccumulator += deltaTime;
-        RecordedDuration = timelineTime;
+        RecordedDuration = Mathf.Max(RecordedDuration, timelineTime);
 
-        // This intentionally mirrors ReplayManager's snapshot loop.
         while (snapshotAccumulator >= snapshotDelta)
         {
             TakeSnapshot(timelineTime);
@@ -117,7 +129,8 @@ public class CharacterReplayTrack : MonoBehaviour
         }
     }
 
-    public void BeginPlayback()
+    // Starts sequential playback from a shared-timeline time.
+    public void BeginPlayback(float startTime)
     {
         if (!HasRecording)
         {
@@ -128,7 +141,12 @@ public class CharacterReplayTrack : MonoBehaviour
         playbackSnapshotIndex = 0;
         CurrentState = TrackState.Playback;
 
-        ApplySnapshotsUpTo(0f);
+        ApplySnapshotsUpTo(startTime);
+    }
+
+    public void BeginPlayback()
+    {
+        BeginPlayback(0f);
     }
 
     public void PlaybackStep(float timelineTime)
@@ -141,6 +159,20 @@ public class CharacterReplayTrack : MonoBehaviour
         ApplySnapshotsUpTo(timelineTime);
     }
 
+  
+    // Restores this track to its most recent snapshot at or before targetTime.
+    public void SeekTo(float targetTime)
+    {
+        if (!HasRecording)
+        {
+            RestoreStartingPose();
+            return;
+        }
+
+        playbackSnapshotIndex = 0;
+        ApplySnapshotsUpTo(targetTime);
+    }
+
     public void Stop()
     {
         CurrentState = TrackState.Idle;
@@ -148,7 +180,10 @@ public class CharacterReplayTrack : MonoBehaviour
 
     public void RestoreStartingPose()
     {
-        transform.SetPositionAndRotation(startingPosition, startingRotation);
+        transform.SetPositionAndRotation(
+            startingPosition,
+            startingRotation);
+
         transform.localScale = startingScale;
     }
 
@@ -159,8 +194,12 @@ public class CharacterReplayTrack : MonoBehaviour
             return;
         }
 
-        replayContainer = ScriptableObject.CreateInstance<ReplayContainer>();
-        replayContainer.name = $"{name}_RuntimeReplayContainer";
+        replayContainer =
+            ScriptableObject.CreateInstance<ReplayContainer>();
+
+        replayContainer.name =
+            $"{name}_RuntimeReplayContainer";
+
         replayContainer.Init();
     }
 
@@ -180,7 +219,8 @@ public class CharacterReplayTrack : MonoBehaviour
 
     private void TakeSnapshot(float timelineTime)
     {
-        SnapshotData snapshotData = new SnapshotData(timelineTime);
+        SnapshotData snapshotData =
+            new SnapshotData(timelineTime);
 
         foreach (IReplayObject replayObject in replayObjects)
         {
@@ -189,8 +229,12 @@ public class CharacterReplayTrack : MonoBehaviour
                 continue;
             }
 
-            SnapshotInfo info = replayObject.SaveSnapshot();
-            snapshotData.AddObjectSnapshot(replayObject.GetId(), info);
+            SnapshotInfo info =
+                replayObject.SaveSnapshot();
+
+            snapshotData.AddObjectSnapshot(
+                replayObject.GetId(),
+                info);
         }
 
         replayContainer.AddSnapshot(snapshotData);
