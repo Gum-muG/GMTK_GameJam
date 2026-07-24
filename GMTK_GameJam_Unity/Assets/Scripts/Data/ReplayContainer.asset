@@ -12,3 +12,1157 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7077fcae011283044a07c44cd4fa92e8, type: 3}
   m_Name: ReplayContainer
   m_EditorClassIdentifier: Assembly-CSharp::ReplayContainer
+  m_snapshots:
+  - frameTime: 0.019999992
+    snapshotList:
+    - rid: 2087655363599139296
+  - frameTime: 0.039999984
+    snapshotList:
+    - rid: 2087655363599139297
+  - frameTime: 0.059999976
+    snapshotList:
+    - rid: 2087655363599139298
+  - frameTime: 0.07999997
+    snapshotList:
+    - rid: 2087655363599139299
+  - frameTime: 0.099999964
+    snapshotList:
+    - rid: 2087655363599139300
+  - frameTime: 0.11999996
+    snapshotList:
+    - rid: 2087655363599139301
+  - frameTime: 0.13999996
+    snapshotList:
+    - rid: 2087655363599139302
+  - frameTime: 0.15999995
+    snapshotList:
+    - rid: 2087655363599139303
+  - frameTime: 0.17999995
+    snapshotList:
+    - rid: 2087655363599139304
+  - frameTime: 0.19999994
+    snapshotList:
+    - rid: 2087655363599139305
+  - frameTime: 0.21999994
+    snapshotList:
+    - rid: 2087655363599139306
+  - frameTime: 0.23999994
+    snapshotList:
+    - rid: 2087655363599139307
+  - frameTime: 0.25999993
+    snapshotList:
+    - rid: 2087655363599139308
+  - frameTime: 0.2799999
+    snapshotList:
+    - rid: 2087655363599139309
+  - frameTime: 0.2999999
+    snapshotList:
+    - rid: 2087655363599139310
+  - frameTime: 0.31999987
+    snapshotList:
+    - rid: 2087655363599139311
+  - frameTime: 0.33999985
+    snapshotList:
+    - rid: 2087655363599139312
+  - frameTime: 0.35999984
+    snapshotList:
+    - rid: 2087655363599139313
+  - frameTime: 0.37999982
+    snapshotList:
+    - rid: 2087655363599139314
+  - frameTime: 0.3999998
+    snapshotList:
+    - rid: 2087655363599139315
+  - frameTime: 0.41999978
+    snapshotList:
+    - rid: 2087655363599139316
+  - frameTime: 0.43999976
+    snapshotList:
+    - rid: 2087655363599139317
+  - frameTime: 0.45999974
+    snapshotList:
+    - rid: 2087655363599139318
+  - frameTime: 0.47999972
+    snapshotList:
+    - rid: 2087655363599139319
+  - frameTime: 0.4999997
+    snapshotList:
+    - rid: 2087655363599139320
+  - frameTime: 0.5199997
+    snapshotList:
+    - rid: 2087655363599139321
+  - frameTime: 0.53999966
+    snapshotList:
+    - rid: 2087655363599139322
+  - frameTime: 0.55999964
+    snapshotList:
+    - rid: 2087655363599139323
+  - frameTime: 0.5799996
+    snapshotList:
+    - rid: 2087655363599139324
+  - frameTime: 0.5999996
+    snapshotList:
+    - rid: 2087655363599139325
+  - frameTime: 0.6199996
+    snapshotList:
+    - rid: 2087655363599139326
+  - frameTime: 0.63999957
+    snapshotList:
+    - rid: 2087655363599139327
+  - frameTime: 0.65999955
+    snapshotList:
+    - rid: 2087655363599139328
+  - frameTime: 0.67999953
+    snapshotList:
+    - rid: 2087655363599139329
+  - frameTime: 0.6999995
+    snapshotList:
+    - rid: 2087655363599139330
+  - frameTime: 0.7199995
+    snapshotList:
+    - rid: 2087655363599139331
+  - frameTime: 0.7399995
+    snapshotList:
+    - rid: 2087655363599139332
+  - frameTime: 0.75999945
+    snapshotList:
+    - rid: 2087655363599139333
+  - frameTime: 0.77999943
+    snapshotList:
+    - rid: 2087655363599139334
+  - frameTime: 0.7999994
+    snapshotList:
+    - rid: 2087655363599139335
+  - frameTime: 0.8199994
+    snapshotList:
+    - rid: 2087655363599139336
+  - frameTime: 0.8399994
+    snapshotList:
+    - rid: 2087655363599139337
+  - frameTime: 0.85999936
+    snapshotList:
+    - rid: 2087655363599139338
+  - frameTime: 0.87999934
+    snapshotList:
+    - rid: 2087655363599139339
+  - frameTime: 0.8999993
+    snapshotList:
+    - rid: 2087655363599139340
+  - frameTime: 0.9199993
+    snapshotList:
+    - rid: 2087655363599139341
+  - frameTime: 0.9399993
+    snapshotList:
+    - rid: 2087655363599139342
+  - frameTime: 0.95999926
+    snapshotList:
+    - rid: 2087655363599139343
+  - frameTime: 0.97999924
+    snapshotList:
+    - rid: 2087655363599139344
+  - frameTime: 0.9999992
+    snapshotList:
+    - rid: 2087655363599139345
+  - frameTime: 1.0199993
+    snapshotList:
+    - rid: 2087655363599139346
+  - frameTime: 1.0399992
+    snapshotList:
+    - rid: 2087655363599139347
+  - frameTime: 1.0599992
+    snapshotList:
+    - rid: 2087655363599139348
+  - frameTime: 1.0799992
+    snapshotList:
+    - rid: 2087655363599139349
+  - frameTime: 1.0999992
+    snapshotList:
+    - rid: 2087655363599139350
+  - frameTime: 1.1199992
+    snapshotList:
+    - rid: 2087655363599139351
+  - frameTime: 1.1399992
+    snapshotList:
+    - rid: 2087655363599139352
+  - frameTime: 1.1599991
+    snapshotList:
+    - rid: 2087655363599139353
+  - frameTime: 1.1799991
+    snapshotList:
+    - rid: 2087655363599139354
+  - frameTime: 1.1999991
+    snapshotList:
+    - rid: 2087655363599139355
+  - frameTime: 1.2199991
+    snapshotList:
+    - rid: 2087655363599139356
+  - frameTime: 1.239999
+    snapshotList:
+    - rid: 2087655363599139357
+  - frameTime: 1.259999
+    snapshotList:
+    - rid: 2087655363599139358
+  - frameTime: 1.279999
+    snapshotList:
+    - rid: 2087655363599139359
+  - frameTime: 1.299999
+    snapshotList:
+    - rid: 2087655363599139360
+  - frameTime: 1.319999
+    snapshotList:
+    - rid: 2087655363599139361
+  - frameTime: 1.339999
+    snapshotList:
+    - rid: 2087655363599139362
+  - frameTime: 1.359999
+    snapshotList:
+    - rid: 2087655363599139363
+  - frameTime: 1.3799989
+    snapshotList:
+    - rid: 2087655363599139364
+  - frameTime: 1.3999989
+    snapshotList:
+    - rid: 2087655363599139365
+  - frameTime: 1.4199989
+    snapshotList:
+    - rid: 2087655363599139366
+  - frameTime: 1.4399989
+    snapshotList:
+    - rid: 2087655363599139367
+  - frameTime: 1.4599988
+    snapshotList:
+    - rid: 2087655363599139368
+  - frameTime: 1.4799988
+    snapshotList:
+    - rid: 2087655363599139369
+  - frameTime: 1.4999988
+    snapshotList:
+    - rid: 2087655363599139370
+  - frameTime: 1.5199988
+    snapshotList:
+    - rid: 2087655363599139371
+  - frameTime: 1.5399988
+    snapshotList:
+    - rid: 2087655363599139372
+  - frameTime: 1.5599988
+    snapshotList:
+    - rid: 2087655363599139373
+  - frameTime: 1.5799987
+    snapshotList:
+    - rid: 2087655363599139374
+  - frameTime: 1.5999987
+    snapshotList:
+    - rid: 2087655363599139375
+  - frameTime: 1.6199987
+    snapshotList:
+    - rid: 2087655363599139376
+  - frameTime: 1.6399987
+    snapshotList:
+    - rid: 2087655363599139377
+  - frameTime: 1.6599987
+    snapshotList:
+    - rid: 2087655363599139378
+  - frameTime: 1.6799986
+    snapshotList:
+    - rid: 2087655363599139379
+  - frameTime: 1.6999986
+    snapshotList:
+    - rid: 2087655363599139380
+  - frameTime: 1.7199986
+    snapshotList:
+    - rid: 2087655363599139381
+  - frameTime: 1.7399986
+    snapshotList:
+    - rid: 2087655363599139382
+  - frameTime: 1.7599986
+    snapshotList:
+    - rid: 2087655363599139383
+  - frameTime: 1.7799985
+    snapshotList:
+    - rid: 2087655363599139384
+  - frameTime: 1.7999985
+    snapshotList:
+    - rid: 2087655363599139385
+  - frameTime: 1.8199985
+    snapshotList:
+    - rid: 2087655363599139386
+  - frameTime: 1.8399985
+    snapshotList:
+    - rid: 2087655363599139387
+  - frameTime: 1.8599985
+    snapshotList:
+    - rid: 2087655363599139388
+  - frameTime: 1.8799984
+    snapshotList:
+    - rid: 2087655363599139389
+  - frameTime: 1.8999984
+    snapshotList:
+    - rid: 2087655363599139390
+  - frameTime: 1.9199984
+    snapshotList:
+    - rid: 2087655363599139391
+  - frameTime: 1.9399984
+    snapshotList:
+    - rid: 2087655363599139392
+  - frameTime: 1.9599984
+    snapshotList:
+    - rid: 2087655363599139393
+  - frameTime: 1.9799984
+    snapshotList:
+    - rid: 2087655363599139394
+  - frameTime: 1.9999983
+    snapshotList:
+    - rid: 2087655363599139395
+  - frameTime: 2.0199983
+    snapshotList:
+    - rid: 2087655363599139396
+  - frameTime: 2.0399983
+    snapshotList:
+    - rid: 2087655363599139397
+  - frameTime: 2.0599983
+    snapshotList:
+    - rid: 2087655363599139398
+  - frameTime: 2.0799983
+    snapshotList:
+    - rid: 2087655363599139399
+  - frameTime: 2.0999982
+    snapshotList:
+    - rid: 2087655363599139400
+  - frameTime: 2.1199982
+    snapshotList:
+    - rid: 2087655363599139401
+  - frameTime: 2.1399982
+    snapshotList:
+    - rid: 2087655363599139402
+  - frameTime: 2.1599982
+    snapshotList:
+    - rid: 2087655363599139403
+  - frameTime: 2.1799982
+    snapshotList:
+    - rid: 2087655363599139404
+  - frameTime: 2.1999981
+    snapshotList:
+    - rid: 2087655363599139405
+  - frameTime: 2.2199981
+    snapshotList:
+    - rid: 2087655363599139406
+  - frameTime: 2.239998
+    snapshotList:
+    - rid: 2087655363599139407
+  - frameTime: 2.259998
+    snapshotList:
+    - rid: 2087655363599139408
+  - frameTime: 2.279998
+    snapshotList:
+    - rid: 2087655363599139409
+  - frameTime: 2.299998
+    snapshotList:
+    - rid: 2087655363599139410
+  references:
+    version: 2
+    RefIds:
+    - rid: 2087655363599139296
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -0.5223983, y: 1, z: 9.459454}
+        rotation: {x: 6.7762636e-21, y: -0.7976306, z: 6.7762636e-21, w: 0.6031464}
+        state: 0
+    - rid: 2087655363599139297
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -1.0000248, y: 1, z: 9.314779}
+        rotation: {x: -2.8495544e-16, y: -0.7923713, z: -3.3118785e-15, w: 0.6100392}
+        state: 0
+    - rid: 2087655363599139298
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -1.3196199, y: 1, z: 9.222353}
+        rotation: {x: 1.6940659e-20, y: -0.78190875, z: -1.0164395e-20, w: 0.6233929}
+        state: 0
+    - rid: 2087655363599139299
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -1.8021445, y: 1, z: 9.09581}
+        rotation: {x: 1.1991479e-15, y: -0.7421954, z: -2.5740857e-15, w: 0.67018354}
+        state: 0
+    - rid: 2087655363599139300
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -2.12735, y: 1, z: 9.028476}
+        rotation: {x: -1.3410903e-16, y: -0.70738983, z: 1.3418357e-16, w: 0.7068237}
+        state: 1
+    - rid: 2087655363599139301
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -2.7170112, y: 1, z: 8.963201}
+        rotation: {x: -0, y: -0.68459785, z: -6.7762636e-21, w: 0.72892106}
+        state: 1
+    - rid: 2087655363599139302
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -3.1896582, y: 1, z: 8.943242}
+        rotation: {x: 1.3552527e-20, y: -0.6709384, z: -6.7762636e-21, w: 0.74151313}
+        state: 1
+    - rid: 2087655363599139303
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -3.946828, y: 1, z: 8.9528265}
+        rotation: {x: -6.7762636e-21, y: -0.64508384, z: -6.7762636e-21, w: 0.7641119}
+        state: 1
+    - rid: 2087655363599139304
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -4.4504976, y: 1, z: 8.98716}
+        rotation: {x: -8.2590456e-16, y: -0.6273566, z: -8.890458e-17, w: 0.7787321}
+        state: 1
+    - rid: 2087655363599139305
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -5.2018948, y: 1, z: 9.080749}
+        rotation: {x: 1.7142659e-15, y: -0.60472405, z: 1.0161007e-16, w: 0.79643506}
+        state: 1
+    - rid: 2087655363599139306
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -5.6989403, y: 1, z: 9.169666}
+        rotation: {x: -0, y: -0.5919137, z: -6.7762636e-21, w: 0.8060014}
+        state: 1
+    - rid: 2087655363599139307
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -6.437434, y: 1.0000001, z: 9.338492}
+        rotation: {x: 1.3552527e-20, y: -0.58011687, z: -0, w: 0.81453323}
+        state: 1
+    - rid: 2087655363599139308
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -6.9252295, y: 1, z: 9.470188}
+        rotation: {x: -6.7762636e-21, y: -0.58011687, z: -0, w: 0.81453323}
+        state: 1
+    - rid: 2087655363599139309
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.3350735, y: 0.9903545, z: 9.497766}
+        rotation: {x: -6.7762636e-21, y: -0.58011687, z: -0, w: 0.81453323}
+        state: 1
+    - rid: 2087655363599139310
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.361954, y: 0.9949449, z: 9.496071}
+        rotation: {x: -6.7762636e-21, y: -0.58011687, z: -0, w: 0.81453323}
+        state: 1
+    - rid: 2087655363599139311
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.3623495, y: 0.99680483, z: 9.496}
+        rotation: {x: -6.7762636e-21, y: -0.58011687, z: -0, w: 0.81453323}
+        state: 1
+    - rid: 2087655363599139312
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.3624635, y: 0.9973189, z: 9.495999}
+        rotation: {x: -6.7762636e-21, y: -0.58011687, z: -0, w: 0.81453323}
+        state: 1
+    - rid: 2087655363599139313
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.363505, y: 0.9975879, z: 9.495999}
+        rotation: {x: -3.14771e-16, y: -0.6043451, z: 2.387481e-16, w: 0.79672265}
+        state: 1
+    - rid: 2087655363599139314
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.3692126, y: 0.9971459, z: 9.495999}
+        rotation: {x: 1.256841e-15, y: -0.65935755, z: -1.3601113e-15, w: 0.7518295}
+        state: 1
+    - rid: 2087655363599139315
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.4986486, y: 0.9998648, z: 9.492608}
+        rotation: {x: -2.032879e-20, y: -0.7781395, z: -1.3552527e-20, w: 0.6280915}
+        state: 1
+    - rid: 2087655363599139316
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.7293296, y: 0.9999947, z: 9.458959}
+        rotation: {x: -3.7835268e-16, y: -0.8289548, z: -2.9440155e-16, w: 0.55931556}
+        state: 1
+    - rid: 2087655363599139317
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.101223, y: 1.0000002, z: 9.198993}
+        rotation: {x: 1.9580691e-15, y: -0.839998, z: 6.675026e-16, w: 0.5425895}
+        state: 1
+    - rid: 2087655363599139318
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.377904, y: 1.5066128, z: 8.899254}
+        rotation: {x: 6.7762636e-21, y: -0.84072256, z: -0, w: 0.5414662}
+        state: 3
+    - rid: 2087655363599139319
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.962632, y: 2.1771019, z: 8.384239}
+        rotation: {x: -0, y: -0.8429785, z: -3.3881318e-21, w: 0.5379473}
+        state: 3
+    - rid: 2087655363599139320
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.343548, y: 2.5644746, z: 8.014312}
+        rotation: {x: 8.201481e-16, y: -0.84577936, z: 8.155911e-17, w: 0.53353286}
+        state: 3
+    - rid: 2087655363599139321
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.852446, y: 3.0561035, z: 7.397034}
+        rotation: {x: 1.3552527e-20, y: -0.84936035, z: -3.3881318e-21, w: 0.52781343}
+        state: 3
+    - rid: 2087655363599139322
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.154931, y: 3.3242364, z: 6.9556518}
+        rotation: {x: -0, y: -0.85179645, z: -3.3881318e-21, w: 0.52387285}
+        state: 3
+    - rid: 2087655363599139323
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.579307, y: 3.6370056, z: 6.276895}
+        rotation: {x: -3.3881318e-21, y: -0.8554965, z: -3.3881318e-21, w: 0.5178086}
+        state: 3
+    - rid: 2087655363599139324
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.907027, y: 3.7858982, z: 5.857982}
+        rotation: {x: -3.3881318e-21, y: -0.8612365, z: -0, w: 0.50820434}
+        state: 3
+    - rid: 2087655363599139325
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -11.459455, y: 3.9198077, z: 5.27677}
+        rotation: {x: -6.7762636e-21, y: -0.8701801, z: 6.7762636e-21, w: 0.49273387}
+        state: 3
+    - rid: 2087655363599139326
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -11.854351, y: 3.9494605, z: 4.9138308}
+        rotation: {x: -0, y: -0.88297766, z: -3.3881318e-21, w: 0.4694151}
+        state: 3
+    - rid: 2087655363599139327
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -12.465001, y: 3.9015098, z: 4.387711}
+        rotation: {x: 6.7762636e-21, y: -0.9218843, z: -0, w: 0.38746542}
+        state: 3
+    - rid: 2087655363599139328
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -12.868134, y: 3.8049228, z: 4.0325613}
+        rotation: {x: 1.0164395e-20, y: -0.95255226, z: -6.7762636e-21, w: 0.30437502}
+        state: 3
+    - rid: 2087655363599139329
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -13.437344, y: 3.5631125, z: 3.4656765}
+        rotation: {x: -3.3881318e-21, y: -0.9799243, z: -0, w: 0.19936982}
+        state: 3
+    - rid: 2087655363599139330
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -13.78105, y: 3.3372855, z: 3.0567572}
+        rotation: {x: 1.709304e-16, y: -0.98776025, z: 3.5948078e-17, w: 0.15597975}
+        state: 3
+    - rid: 2087655363599139331
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -14.236336, y: 2.9016154, z: 2.3973966}
+        rotation: {x: 1.7787692e-20, y: -0.9934441, z: 6.7762636e-21, w: 0.11431926}
+        state: 3
+    - rid: 2087655363599139332
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -14.499459, y: 2.5465486, z: 1.931977}
+        rotation: {x: 2.5464436e-16, y: -0.9958301, z: 4.4337093e-17, w: 0.091227435}
+        state: 3
+    - rid: 2087655363599139333
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -14.837881, y: 1.9170184, z: 1.2036488}
+        rotation: {x: 7.6232965e-21, y: -0.994693, z: 6.7762636e-21, w: 0.10288781}
+        state: 3
+    - rid: 2087655363599139334
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -15.03655, y: 1.4327116, z: 0.7049009}
+        rotation: {x: -5.8024213e-16, y: -0.9916522, z: -7.54808e-17, w: 0.12894163}
+        state: 3
+    - rid: 2087655363599139335
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -15.168382, y: 1.132361, z: 0.64491427}
+        rotation: {x: -6.7762636e-21, y: -0.69811684, z: -1.3552527e-20, w: 0.71598387}
+        state: 3
+    - rid: 2087655363599139336
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -15.307192, y: 0.9916134, z: 0.7534787}
+        rotation: {x: 6.7762636e-21, y: -0.6710177, z: 1.3552527e-20, w: 0.7414414}
+        state: 1
+    - rid: 2087655363599139337
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -15.551397, y: 0.99993294, z: 1.0065278}
+        rotation: {x: 6.7762636e-21, y: -0.6710177, z: 1.3552527e-20, w: 0.7414414}
+        state: 1
+    - rid: 2087655363599139338
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -15.78553, y: 0.9999974, z: 1.2713574}
+        rotation: {x: -0, y: -0.6762291, z: -0, w: 0.7366915}
+        state: 1
+    - rid: 2087655363599139339
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -16.223412, y: 1, z: 1.7673838}
+        rotation: {x: -2.032879e-20, y: -0.7369445, z: 6.7762636e-21, w: 0.6759532}
+        state: 1
+    - rid: 2087655363599139340
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -16.573456, y: 1.0000001, z: 2.1249468}
+        rotation: {x: 1.3552527e-20, y: -0.8074035, z: -6.7762636e-21, w: 0.5899997}
+        state: 1
+    - rid: 2087655363599139341
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -17.164196, y: 1.0000001, z: 2.585741}
+        rotation: {x: 6.7762636e-21, y: -0.9098408, z: -0, w: 0.4149575}
+        state: 1
+    - rid: 2087655363599139342
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -17.607014, y: 1, z: 2.80611}
+        rotation: {x: -4.108889e-16, y: -0.95368636, z: -3.3285007e-17, w: 0.30080292}
+        state: 1
+    - rid: 2087655363599139343
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -18.325832, y: 1, z: 2.9717357}
+        rotation: {x: -1.8634725e-20, y: -0.98831445, z: -1.3552527e-20, w: 0.15242882}
+        state: 1
+    - rid: 2087655363599139344
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -18.817522, y: 1, z: 2.9639323}
+        rotation: {x: -2.4987472e-20, y: -0.99875546, z: -0, w: 0.049875375}
+        state: 1
+    - rid: 2087655363599139345
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -19.530733, y: 1, z: 2.77544}
+        rotation: {x: -4.483053e-16, y: -0.99907464, z: 1.9285246e-17, w: -0.043011315}
+        state: 1
+    - rid: 2087655363599139346
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -19.972061, y: 1, z: 2.5488522}
+        rotation: {x: 1.9481758e-20, y: -0.9954911, z: -0, w: -0.094855465}
+        state: 1
+    - rid: 2087655363599139347
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -20.5615, y: 1, z: 2.0907788}
+        rotation: {x: 5.0821977e-21, y: -0.9842549, z: -0, w: -0.17675497}
+        state: 1
+    - rid: 2087655363599139348
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -20.89901, y: 1, z: 1.7221595}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139349
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -21.294678, y: 1, z: 1.1046453}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139350
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -21.410723, y: 1, z: 0.6473825}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139351
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -21.416523, y: 1, z: -0.09266558}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139352
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -21.340193, y: 1, z: -0.5881301}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139353
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -21.150673, y: 1, z: -1.3194516}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139354
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -20.991983, y: 1, z: -1.7986913}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139355
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -20.724611, y: 1, z: -2.5077841}
+        rotation: {x: 6.7762636e-21, y: -0.9766874, z: -0, w: -0.21466687}
+        state: 1
+    - rid: 2087655363599139356
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -20.533354, y: 1, z: -2.9755855}
+        rotation: {x: 3.0493186e-20, y: -0.9654572, z: -1.3552527e-20, w: -0.26056185}
+        state: 1
+    - rid: 2087655363599139357
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -20.201056, y: 1.0000001, z: -3.653837}
+        rotation: {x: -5.5966516e-16, y: -0.9209806, z: 2.367491e-16, w: -0.38960853}
+        state: 1
+    - rid: 2087655363599139358
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -19.924376, y: 1.2592683, z: -4.0800605}
+        rotation: {x: -0, y: -0.88601935, z: -1.3552527e-20, w: -0.4636484}
+        state: 3
+    - rid: 2087655363599139359
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -19.41984, y: 1.9655292, z: -4.7013206}
+        rotation: {x: 6.7762636e-21, y: -0.8460631, z: -1.3552527e-20, w: -0.5330828}
+        state: 3
+    - rid: 2087655363599139360
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -19.042164, y: 2.37675, z: -5.0780973}
+        rotation: {x: 1.7504309e-15, y: -0.8299555, z: -3.8784622e-16, w: -0.5578296}
+        state: 3
+    - rid: 2087655363599139361
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -18.422928, y: 2.904151, z: -5.5866632}
+        rotation: {x: -1.3552527e-20, y: -0.8196416, z: 1.3552527e-20, w: -0.5728767}
+        state: 3
+    - rid: 2087655363599139362
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -17.982708, y: 3.1961317, z: -5.8913608}
+        rotation: {x: -6.7762636e-21, y: -0.8143709, z: 1.3552527e-20, w: -0.5803448}
+        state: 3
+    - rid: 2087655363599139363
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -17.292406, y: 3.544673, z: -6.303576}
+        rotation: {x: 1.3552527e-20, y: -0.8049897, z: -1.3552527e-20, w: -0.5932888}
+        state: 3
+    - rid: 2087655363599139364
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -16.81665, y: 3.7174137, z: -6.551422}
+        rotation: {x: -0, y: -0.7948873, z: -0, w: -0.6067572}
+        state: 3
+    - rid: 2087655363599139365
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -16.084036, y: 3.887095, z: -6.884444}
+        rotation: {x: 1.8290762e-15, y: -0.7768869, z: 3.7864406e-15, w: -0.6296403}
+        state: 3
+    - rid: 2087655363599139366
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -15.584583, y: 3.9405959, z: -7.080606}
+        rotation: {x: 1.3552527e-20, y: -0.76711154, z: -0, w: -0.64151376}
+        state: 3
+    - rid: 2087655363599139367
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -14.821813, y: 3.930417, z: -7.3383207}
+        rotation: {x: -1.3552527e-20, y: -0.756296, z: -0, w: -0.65422964}
+        state: 3
+    - rid: 2087655363599139368
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -14.334602, y: 3.859678, z: -7.544024}
+        rotation: {x: -0, y: -0.7427133, z: -0, w: -0.6696096}
+        state: 3
+    - rid: 2087655363599139369
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -13.638432, y: 3.6566398, z: -7.938013}
+        rotation: {x: -3.1864566e-15, y: -0.71938294, z: -1.1245345e-15, w: -0.6946137}
+        state: 3
+    - rid: 2087655363599139370
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -13.193539, y: 3.4566607, z: -8.237079}
+        rotation: {x: 2.316669e-16, y: -0.6991398, z: 1.126215e-16, w: -0.714985}
+        state: 3
+    - rid: 2087655363599139371
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -12.542992, y: 3.0597625, z: -8.712578}
+        rotation: {x: -0, y: -0.6667627, z: -0, w: -0.7452702}
+        state: 3
+    - rid: 2087655363599139372
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -12.113095, y: 2.7305436, z: -9.0353565}
+        rotation: {x: -6.4808185e-16, y: -0.64227754, z: 7.7340207e-16, w: -0.76647216}
+        state: 3
+    - rid: 2087655363599139373
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -11.445298, y: 2.1397853, z: -9.45247}
+        rotation: {x: -0, y: -0.58370465, z: -1.3552527e-20, w: -0.8119661}
+        state: 3
+    - rid: 2087655363599139374
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.983245, y: 1.6813265, z: -9.593702}
+        rotation: {x: -0, y: -0.52390534, z: 1.3552527e-20, w: -0.8517765}
+        state: 3
+    - rid: 2087655363599139375
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.250258, y: 0.89670825, z: -9.595815}
+        rotation: {x: -0, y: -0.4457697, z: -2.7105054e-20, w: -0.89514774}
+        state: 1
+    - rid: 2087655363599139376
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.167573, y: 0.9958683, z: -9.536302}
+        rotation: {x: -0, y: -0.41700363, z: -1.3552527e-20, w: -0.90890485}
+        state: 1
+    - rid: 2087655363599139377
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -10.007885, y: 1.2591031, z: -9.179733}
+        rotation: {x: -0, y: -0.4129583, z: -0, w: -0.91075}
+        state: 3
+    - rid: 2087655363599139378
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.901799, y: 1.7418677, z: -8.793993}
+        rotation: {x: 2.7105054e-20, y: -0.4129583, z: -1.3552527e-20, w: -0.91075}
+        state: 3
+    - rid: 2087655363599139379
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.735642, y: 2.3765848, z: -8.032518}
+        rotation: {x: 2.7105054e-20, y: -0.4129583, z: -0, w: -0.91075}
+        state: 3
+    - rid: 2087655363599139380
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.640355, y: 2.7401094, z: -7.503856}
+        rotation: {x: -0, y: -0.41449288, z: 2.7105054e-20, w: -0.91005254}
+        state: 3
+    - rid: 2087655363599139381
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.518033, y: 3.1959665, z: -6.7071056}
+        rotation: {x: -1.1880416e-15, y: -0.42370427, z: 3.484558e-15, w: -0.9058006}
+        state: 3
+    - rid: 2087655363599139382
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.444913, y: 3.4402514, z: -6.174558}
+        rotation: {x: -0, y: -0.43680596, z: -1.3552527e-20, w: -0.8995558}
+        state: 3
+    - rid: 2087655363599139383
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.33726, y: 3.7172484, z: -5.375386}
+        rotation: {x: -0, y: -0.46210688, z: -0, w: -0.88682425}
+        state: 3
+    - rid: 2087655363599139384
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.260509, y: 3.8422933, z: -4.8433714}
+        rotation: {x: -0, y: -0.48961952, z: -0, w: -0.8719362}
+        state: 3
+    - rid: 2087655363599139385
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.124145, y: 3.9404306, z: -4.0491996}
+        rotation: {x: -0, y: -0.5413703, z: -1.3552527e-20, w: -0.8407843}
+        state: 3
+    - rid: 2087655363599139386
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -9.010181, y: 3.9462354, z: -3.5247939}
+        rotation: {x: -0, y: -0.58108854, z: 1.3552527e-20, w: -0.8138403}
+        state: 3
+    - rid: 2087655363599139387
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.791002, y: 3.8595128, z: -2.751358}
+        rotation: {x: -2.5898066e-15, y: -0.6265117, z: 4.8493653e-16, w: -0.77941203}
+        state: 3
+    - rid: 2087655363599139388
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.609397, y: 3.737078, z: -2.2474036}
+        rotation: {x: -0, y: -0.6552678, z: -0, w: -0.75539666}
+        state: 3
+    - rid: 2087655363599139389
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.281387, y: 3.4564955, z: -1.5143828}
+        rotation: {x: -6.233214e-16, y: -0.6894972, z: -6.8178427e-15, w: -0.7242884}
+        state: 3
+    - rid: 2087655363599139390
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -8.02625, y: 3.2048206, z: -1.0437045}
+        rotation: {x: -0, y: -0.71629906, z: -0, w: -0.6977934}
+        state: 3
+    - rid: 2087655363599139391
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.5874166, y: 2.7303786, z: -0.37233192}
+        rotation: {x: -6.7762636e-21, y: -0.76879716, z: -0, w: -0.63949275}
+        state: 3
+    - rid: 2087655363599139392
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -7.255114, y: 2.3494637, z: 0.045911238}
+        rotation: {x: 7.5314104e-16, y: -0.79993325, z: 3.7647565e-16, w: -0.60008895}
+        state: 3
+    - rid: 2087655363599139393
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -6.6978855, y: 1.6811615, z: 0.62092566}
+        rotation: {x: -0, y: -0.8256362, z: 1.3552527e-20, w: -0.56420285}
+        state: 3
+    - rid: 2087655363599139394
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -6.291786, y: 1.1710067, z: 0.96844697}
+        rotation: {x: 6.7762636e-21, y: -0.8408802, z: -0, w: -0.5412213}
+        state: 3
+    - rid: 2087655363599139395
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -5.9329543, y: 0.9958617, z: 1.2185962}
+        rotation: {x: 6.7762636e-21, y: -0.86252147, z: -0, w: -0.5060205}
+        state: 1
+    - rid: 2087655363599139396
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -5.6207466, y: 1.5024743, z: 1.3609923}
+        rotation: {x: 1.7840886e-15, y: -0.87712556, z: -4.760867e-16, w: -0.48026115}
+        state: 3
+    - rid: 2087655363599139397
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -4.943295, y: 2.1729634, z: 1.61803}
+        rotation: {x: -6.7762636e-21, y: -0.89504266, z: 1.3552527e-20, w: -0.44598052}
+        state: 3
+    - rid: 2087655363599139398
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -4.432296, y: 2.560336, z: 1.7814999}
+        rotation: {x: 6.7762636e-21, y: -0.90472203, z: -0, w: -0.42600244}
+        state: 3
+    - rid: 2087655363599139399
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -3.6536753, y: 3.051965, z: 1.9845581}
+        rotation: {x: -0, y: -0.9171958, z: -1.3552527e-20, w: -0.3984368}
+        state: 3
+    - rid: 2087655363599139400
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -3.1279821, y: 3.320098, z: 2.092097}
+        rotation: {x: -4.8421147e-16, y: -0.9229393, z: 8.5975877e-16, w: -0.38494566}
+        state: 3
+    - rid: 2087655363599139401
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -2.332285, y: 3.632867, z: 2.2148318}
+        rotation: {x: -0, y: -0.92811257, z: 1.3552527e-20, w: -0.37229985}
+        state: 3
+    - rid: 2087655363599139402
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -1.7985582, y: 3.7817597, z: 2.273852}
+        rotation: {x: 6.7762636e-21, y: -0.93176043, z: -0, w: -0.3630738}
+        state: 3
+    - rid: 2087655363599139403
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -0.9950422, y: 3.9156692, z: 2.3320885}
+        rotation: {x: -0, y: -0.9351591, z: -1.3552527e-20, w: -0.35422808}
+        state: 3
+    - rid: 2087655363599139404
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: -0.45821846, y: 3.945322, z: 2.3533137}
+        rotation: {x: -6.7762636e-21, y: -0.9376945, z: -0, w: -0.34746087}
+        state: 3
+    - rid: 2087655363599139405
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: 0.34764528, y: 3.8973713, z: 2.3615012}
+        rotation: {x: 6.7762636e-21, y: -0.9444926, z: -1.3552527e-20, w: -0.3285327}
+        state: 3
+    - rid: 2087655363599139406
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: 0.88476104, y: 3.8007843, z: 2.3505964}
+        rotation: {x: 3.3881318e-21, y: -0.9514317, z: 2.7105054e-20, w: -0.30785993}
+        state: 3
+    - rid: 2087655363599139407
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: 1.6889675, y: 3.558974, z: 2.3046477}
+        rotation: {x: 1.0164395e-20, y: -0.96260875, z: -0, w: -0.27089557}
+        state: 3
+    - rid: 2087655363599139408
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: 2.2231426, y: 3.333147, z: 2.2510755}
+        rotation: {x: -6.7762636e-21, y: -0.9695204, z: -0, w: -0.24501072}
+        state: 3
+    - rid: 2087655363599139409
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: 3.0189776, y: 2.897477, z: 2.131093}
+        rotation: {x: 4.4051473e-15, y: -0.9816556, z: -1.1716837e-15, w: -0.19066264}
+        state: 3
+    - rid: 2087655363599139410
+      type: {class: PlayerSnapshotInfo, ns: , asm: Assembly-CSharp}
+      data:
+        id: Player
+        position: {x: 3.5433307, y: 2.5424101, z: 2.0197637}
+        rotation: {x: -3.3881318e-21, y: -0.99014115, z: 1.3552527e-20, w: -0.14007337}
+        state: 3
