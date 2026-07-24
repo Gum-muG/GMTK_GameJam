@@ -224,7 +224,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         PlayerSnapshotInfo playerSnapshot = (PlayerSnapshotInfo) info;
         clone.rotation = playerSnapshot.rotation;
         clone.position = playerSnapshot.position;
-        Debug.Log("MOVING");
     }
 
     public string GetId()

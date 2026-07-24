@@ -23,11 +23,8 @@ public class ReplayManager : MonoBehaviour
     private float snapshotDeltaTotal;
     private void Awake()
     {
+        replayContainer.Init();
         instance = this;
-        if (currentState != State.Playback)
-        {
-            replayContainer.Init();
-        }
     }
 
     public void StartRecording()
@@ -36,10 +33,12 @@ public class ReplayManager : MonoBehaviour
     }
     public void StartPlayback()
     {
+        preparePlayback();
         currentState = State.Playback;
     }
     public void Stop()
     {
+        
         currentState = State.Idle;
     }
     // Adds object to list of recorded objects
@@ -62,7 +61,6 @@ public class ReplayManager : MonoBehaviour
         {
             foreach(IReplayObject obj in replayObjects)
             {
-                Debug.Log(obj.GetId());
                 if(currentSnapshot.GetObjectSnapshot(obj.GetId(), out SnapshotInfo info))
                 {
                     
@@ -71,7 +69,6 @@ public class ReplayManager : MonoBehaviour
             }
         }
         hasNextSnapshot = replayContainer.GetSnapshot(snapshotIndex , out SnapshotData nextSnapshot);
-        Debug.Log("Debig");
         if (hasNextSnapshot)
         {
             nextSnapshotTime = nextSnapshot.frameTime;
@@ -91,7 +88,6 @@ public class ReplayManager : MonoBehaviour
             }
         } else if (currentState == State.Playback)
         {
-            Debug.Log(hasNextSnapshot + " " + time + " " + nextSnapshotTime + " " + snapshotIndex);
             snapshotDeltaTotal += Time.fixedDeltaTime;
             if(snapshotDeltaTotal >= snapshotDelta)
             {
@@ -99,8 +95,8 @@ public class ReplayManager : MonoBehaviour
                 if(time  >= nextSnapshotTime && hasNextSnapshot)
                 {
                     time += Time.fixedDeltaTime;
-                    Debug.Log("Justin Timberlake");
                     LoadNextSnapshot();
+                    Debug.Log("d");
                     snapshotIndex++;
                     
                 }
@@ -110,18 +106,25 @@ public class ReplayManager : MonoBehaviour
         }
     }
 
+    public void preparePlayback()
+    {
+        time = 0;
+        snapshotDeltaTotal = 0;
+        snapshotIndex = 0;
+        nextSnapshotTime = 0;
+        hasNextSnapshot = true;
+    }
+
     
     private float time = 0;
     // Creates snapshot data and saves the info to it. Then adds to container
     private void TakeSnapshot()
     {
-        Debug.Log("Snapshot");
         time += Time.fixedDeltaTime;
         SnapshotData snapshotData = new SnapshotData(time);
 
         foreach(IReplayObject replayObject in replayObjects)
         {
-            Debug.Log(((PlayerSnapshotInfo)replayObject.SaveSnapshot()).position);
             snapshotData.AddObjectSnapshot(((UnityEngine.Object)replayObject).name, replayObject.SaveSnapshot());
         }
         
@@ -164,7 +167,6 @@ public struct SnapshotData
     {
         if (snapshots == null)
         {
-            Debug.Log("MOV");
             BuildDictionary();
         }
         return snapshots.TryGetValue(id, out info);
@@ -172,7 +174,6 @@ public struct SnapshotData
     private void BuildDictionary()
     {
         snapshots = new Dictionary<string, SnapshotInfo>();
-        Debug.Log(snapshotList.Count);
         foreach(SnapshotInfo snap in snapshotList)
         {
             
