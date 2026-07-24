@@ -39,6 +39,8 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
 
     public MovementState movementState;
 
+    public Transform clone;
+
     public enum MovementState
     {
         WALKING,
@@ -192,6 +194,7 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     {
         PlayerSnapshotInfo playerSnapshotInfo = new PlayerSnapshotInfo()
         {
+            id = GetId(),
             position = transform.position,
             rotation = forward.rotation,
             state = movementState
@@ -201,6 +204,14 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
 
     public void LoadSnapshot(SnapshotInfo info)
     {
-        throw new System.NotImplementedException();
+        PlayerSnapshotInfo playerSnapshot = (PlayerSnapshotInfo) info;
+        clone.rotation = playerSnapshot.rotation;
+        clone.position = playerSnapshot.position;
+        Debug.Log("MOVING");
+    }
+
+    public string GetId()
+    {
+        return name;
     }
 }

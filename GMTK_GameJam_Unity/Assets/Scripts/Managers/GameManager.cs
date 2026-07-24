@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour
                 ReplayManager.instance.Stop(); 
                 recording = false;
             }
+        } 
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            ReplayManager.instance.StartPlayback();
         }
     }
 }
