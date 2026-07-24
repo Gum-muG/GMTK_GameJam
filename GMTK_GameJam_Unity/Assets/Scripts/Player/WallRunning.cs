@@ -25,6 +25,7 @@ public class WallRunning : MonoBehaviour
     public Transform forward;
     public Transform cameraTransform;
     public PlayerCamera playerCamera;
+    public Dashing dashing;
 
     private PlayerMovement playerMovement;
     private Rigidbody rb;
@@ -190,6 +191,7 @@ public class WallRunning : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         rb.AddForce(forceToApply, ForceMode.Impulse);
+        dashing.ResetDashCooldown();
     }
 
     private void OnCollisionEnter(Collision collision)

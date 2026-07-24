@@ -87,6 +87,7 @@ public interface IReplayObject
     void LoadSnapshot(SnapshotInfo snapshotInfo);
 }
 // Snapshot data of a frame
+[System.Serializable]
 public struct SnapshotData
 {
     public float frameTime;

@@ -63,6 +63,12 @@ public class Dashing : MonoBehaviour
             return;
 
         rb.AddForce(forward.forward * Mathf.Pow(playerMovement.dashSpeed, dashTimer / dashTime * 2f), ForceMode.Force);
+    }
 
-}
+    public void ResetDashCooldown()
+    {
+        canDash = true;
+        isDashing = false;
+        dashTimer = dashTime;
+    }
 }

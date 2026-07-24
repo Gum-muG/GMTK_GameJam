@@ -38,6 +38,10 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     private CharacterControlState controlState;
 
     public MovementState movementState;
+    public float coyoteTime = .03f;
+
+    private float coyoteTimeCounter;
+    public float fallMultiplier = 2.5f;
 
     public enum MovementState
     {
@@ -67,6 +71,14 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         }
 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
+        if (isGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
 
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
@@ -90,9 +102,10 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
             movementState = MovementState.AIR;
         }
 
-        if(Input.GetKey(KeyCode.Space) && canJump && isGrounded)
+        if(Input.GetKeyDown(jumpKey) && canJump && (coyoteTimeCounter > 0f || isGrounded))
         {
             Jump();
+            coyoteTimeCounter = 0f;
             Invoke(nameof(ResetJump), 0.1f);
         }
 
@@ -129,18 +142,22 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         if (wallRunning){
             moveDir = Vector3.zero;
         }
-        //use camera's rotation to set a look dir, use the look dir to apply force in that dir when jumping off wall
-        //change moveDir when wallrunning to not include player rotation so looking away from wall doesn't move you off of wall(wallMoveDir)
-        //get dash working on my end
         //have seperate wall layers, one for runnable walls, one for non-runnable walls
         //swapping over and systems in place for timeline
-        //way to spawn in platforms and walls
-        //way to shoot projectiles of some sort(hitscan or otherwise, we can decide later, maybe both)
         //dodge roll
         //push
         //shield
         //reset item
-        
+
+        //timer budget
+        //map
+        //death marker mechanic
+
+    
+        if (rb.linearVelocity.y < 0f && !isGrounded && !wallRunning)
+        {
+            rb.AddForce(Vector3.down * fallMultiplier, ForceMode.Acceleration);
+        }
         
         if (OnSlope() && !exitingSlope)
         {
@@ -203,4 +220,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     {
         throw new System.NotImplementedException();
     }
+
+    
 }
