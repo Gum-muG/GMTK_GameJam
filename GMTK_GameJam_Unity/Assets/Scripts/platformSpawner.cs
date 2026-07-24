@@ -10,17 +10,21 @@ public class PlatformSpawner : MonoBehaviour
 
     public BuildType currentBuildType;
 
+    [Header("Final prefabs")]
     public GameObject platformPrefab;
     public GameObject wallPrefab;
 
+    [Header("Preview prefabs")]
     public GameObject platformPreviewPrefab;
     public GameObject wallPreviewPrefab;
 
+    [Header("Layers")]
     public string previewLayerName = "Preview";
     public string groundLayerName = "Ground";
     public string wallLayerName = "Wall";
 
     private GameObject currentPreview;
+    private int nextBuildId;
 
     private void Update()
     {
@@ -37,63 +41,87 @@ public class PlatformSpawner : MonoBehaviour
 
     public void ToggleBuildType()
     {
-        if (currentBuildType == BuildType.Platform)
+        currentBuildType = currentBuildType == BuildType.Platform
+            ? BuildType.Wall
+            : BuildType.Platform;
+
+        if (currentPreview == null)
         {
-            currentBuildType = BuildType.Wall;
-        }
-        else
-        {
-            currentBuildType = BuildType.Platform;
+            return;
         }
 
-        if (currentPreview != null)
-        {
-            Vector3 previewPosition = currentPreview.transform.position;
-            Quaternion previewRotation = currentPreview.transform.rotation;
+        Vector3 previewPosition = currentPreview.transform.position;
+        Quaternion previewRotation = currentPreview.transform.rotation;
 
-            SpawnPreview();
-            MovePreview(previewPosition, previewRotation);
-        }
+        SpawnPreview();
+        MovePreview(previewPosition, previewRotation);
     }
 
+    // Preserves the original public Spawn API.
     public void Spawn(Vector3 position, Quaternion rotation)
     {
-        GameObject spawnedObject = null;
+        string objectId = $"{currentBuildType}_{nextBuildId++}";
 
-        switch (currentBuildType)
+        SpawnRecorded(
+            currentBuildType,
+            position,
+            rotation,
+            objectId);
+    }
+
+    public GameObject SpawnRecorded(
+        BuildType buildType,
+        Vector3 position,
+        Quaternion rotation,
+        string objectId)
+    {
+        GameObject prefab = buildType == BuildType.Platform
+            ? platformPrefab
+            : wallPrefab;
+
+        if (prefab == null)
         {
-            case BuildType.Platform:
-                spawnedObject = Instantiate(platformPrefab, position, rotation);
-                SetLayerRecursively(spawnedObject, LayerMask.NameToLayer(groundLayerName));
-                break;
-
-            case BuildType.Wall:
-                spawnedObject = Instantiate(wallPrefab, position, rotation);
-                SetLayerRecursively(spawnedObject, LayerMask.NameToLayer(wallLayerName));
-                break;
+            Debug.LogError($"No prefab assigned for {buildType}.");
+            return null;
         }
+
+        GameObject spawnedObject = Instantiate(prefab, position, rotation);
+        spawnedObject.name = objectId;
+
+        string layerName = buildType == BuildType.Platform
+            ? groundLayerName
+            : wallLayerName;
+
+        SetLayerRecursively(
+            spawnedObject,
+            LayerMask.NameToLayer(layerName));
+
+        return spawnedObject;
     }
 
     public void SpawnPreview()
     {
         DestroyPreview();
 
-        switch (currentBuildType)
-        {
-            case BuildType.Platform:
-                currentPreview = Instantiate(platformPreviewPrefab);
-                break;
+        GameObject previewPrefab = currentBuildType == BuildType.Platform
+            ? platformPreviewPrefab
+            : wallPreviewPrefab;
 
-            case BuildType.Wall:
-                currentPreview = Instantiate(wallPreviewPrefab);
-                break;
+        if (previewPrefab == null)
+        {
+            Debug.LogError(
+                $"No preview prefab assigned for {currentBuildType}.");
+            return;
         }
 
-        SetLayerRecursively(currentPreview, LayerMask.NameToLayer(previewLayerName));
+        currentPreview = Instantiate(previewPrefab);
 
-        Collider[] colliders = currentPreview.GetComponentsInChildren<Collider>();
+        SetLayerRecursively(
+            currentPreview,
+            LayerMask.NameToLayer(previewLayerName));
 
-        foreach (Collider previewCollider in colliders)
+        foreach (Collider previewCollider in
+                 currentPreview.GetComponentsInChildren<Collider>())
         {
             previewCollider.enabled = true;
             previewCollider.isTrigger = true;
@@ -102,18 +130,64 @@ public class PlatformSpawner : MonoBehaviour
 
     public void MovePreview(Vector3 position, Quaternion rotation)
     {
-        if (currentPreview == null)
-            return;
-
-        currentPreview.transform.SetPositionAndRotation(position, rotation);
+        if (currentPreview != null)
+        {
+            currentPreview.transform.SetPositionAndRotation(
+                position,
+                rotation);
+        }
     }
 
     public void ConfirmPlacement()
     {
         if (currentPreview == null)
+        {
             return;
+        }
 
-        Spawn(currentPreview.transform.position, currentPreview.transform.rotation);
+        Vector3 position = currentPreview.transform.position;
+        Quaternion rotation = currentPreview.transform.rotation;
+        BuildType placedType = currentBuildType;
+        string objectId = $"{placedType}_{nextBuildId++}";
+
+        GameObject spawnedObject = SpawnRecorded(
+            placedType,
+            position,
+            rotation,
+            objectId);
+
+        bool recordedByCharacterTimeline = false;
+
+        if (CharacterSwapManager.instance != null)
+        {
+            recordedByCharacterTimeline =
+                CharacterSwapManager.instance.RecordBuildEvent(
+                    objectId,
+                    placedType,
+                    position,
+                    rotation,
+                    spawnedObject);
+        }
+        else
+        {
+            // Keeps the older single-track event recorder usable.
+            TimelineEventRecorder.instance?.RecordBuildEvent(
+                objectId,
+                placedType,
+                position,
+                rotation,
+                spawnedObject);
+        }
+
+        if (CharacterSwapManager.instance != null &&
+            !recordedByCharacterTimeline &&
+            spawnedObject != null)
+        {
+            Debug.LogWarning(
+                "Placement was not recorded, so the spawned object was removed.");
+
+            Destroy(spawnedObject);
+        }
 
         DestroyPreview();
     }
@@ -134,8 +208,10 @@ public class PlatformSpawner : MonoBehaviour
 
     private void SetLayerRecursively(GameObject target, int layer)
     {
-        if (target == null || layer == -1)
+        if (target == null || layer < 0)
+        {
             return;
+        }
 
         target.layer = layer;
 

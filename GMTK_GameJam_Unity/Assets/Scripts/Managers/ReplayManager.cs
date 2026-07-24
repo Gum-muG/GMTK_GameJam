@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore;
 
 public class ReplayManager : MonoBehaviour
 {
@@ -12,139 +11,169 @@ public class ReplayManager : MonoBehaviour
         Record,
         Playback
     }
-    // Keeps data of replay in a scriptable object
-    public ReplayContainer replayContainer;
-    // List of objects being recorded
-    public List<IReplayObject> replayObjects;
-    public State currentState;
-    // Time between snapshots
-    public float snapshotDelta;
 
-    private float snapshotDeltaTotal;
+    [Header("Replay data")]
+    public ReplayContainer replayContainer;
+    public List<IReplayObject> replayObjects = new List<IReplayObject>();
+
+    [Header("Timing")]
+    [Min(0.001f)] public float snapshotDelta = 0.02f;
+
+    public State currentState = State.Idle;
+    public float CurrentTime { get; private set; }
+
+    // Small compatibility fix only.
+    public bool IsRecording => currentState == State.Record;
+    public bool IsPlayingBack => currentState == State.Playback;
+
+    private float snapshotAccumulator;
+    private int playbackSnapshotIndex;
+
     private void Awake()
     {
-        replayContainer.Init();
         instance = this;
+
+        if (replayContainer != null)
+        {
+            replayContainer.Init();
+        }
     }
 
     public void StartRecording()
     {
+        if (replayContainer == null)
+        {
+            Debug.LogError("ReplayManager needs a ReplayContainer.");
+            return;
+        }
+
+        replayContainer.Init();
+        CurrentTime = 0f;
+        snapshotAccumulator = 0f;
+        playbackSnapshotIndex = 0;
         currentState = State.Record;
+
+        TimelineEventRecorder.instance?.StartRecording();
+
+        // Capture t = 0 so playback has a defined initial state.
+        TakeSnapshot();
     }
+
     public void StartPlayback()
     {
-        preparePlayback();
+        CurrentTime = 0f;
+        snapshotAccumulator = 0f;
+        playbackSnapshotIndex = 0;
         currentState = State.Playback;
+
+        TimelineEventRecorder.instance?.StartPlayback();
+
+        // Restore the first snapshot immediately.
+        ApplySnapshotsUpTo(CurrentTime);
+        TimelineEventRecorder.instance?.ProcessEventsUpTo(CurrentTime);
     }
+
     public void Stop()
     {
-        
         currentState = State.Idle;
+        TimelineEventRecorder.instance?.Stop();
     }
-    // Adds object to list of recorded objects
+
     public void Register(IReplayObject replayObject)
     {
-        if(replayObjects == null)
+        if (replayObject == null || replayObjects.Contains(replayObject))
         {
-            replayObjects = new List<IReplayObject>();
+            return;
         }
+
         replayObjects.Add(replayObject);
     }
 
-    private int snapshotIndex = 0;
-    private float nextSnapshotTime;
-    private bool hasNextSnapshot = true;
-
-    private void LoadNextSnapshot()
+    public void Unregister(IReplayObject replayObject)
     {
-        if(replayContainer.GetSnapshot(snapshotIndex, out SnapshotData currentSnapshot))
-        {
-            foreach(IReplayObject obj in replayObjects)
-            {
-                if(currentSnapshot.GetObjectSnapshot(obj.GetId(), out SnapshotInfo info))
-                {
-                    
-                    obj.LoadSnapshot(info);
-                }
-            }
-        }
-        hasNextSnapshot = replayContainer.GetSnapshot(snapshotIndex , out SnapshotData nextSnapshot);
-        if (hasNextSnapshot)
-        {
-            nextSnapshotTime = nextSnapshot.frameTime;
-        }
+        replayObjects.Remove(replayObject);
     }
 
-    public void FixedUpdate()
+    private void FixedUpdate()
     {
-        // If recording, take snapshot everty snapshotDelta seconds
-        if(currentState == State.Record)
+        if (currentState == State.Idle)
         {
-            snapshotDeltaTotal += Time.fixedDeltaTime;
-            if(snapshotDeltaTotal >= snapshotDelta)
+            return;
+        }
+
+        CurrentTime += Time.fixedDeltaTime;
+
+        if (currentState == State.Record)
+        {
+            snapshotAccumulator += Time.fixedDeltaTime;
+
+            while (snapshotAccumulator >= snapshotDelta)
             {
                 TakeSnapshot();
-                snapshotDeltaTotal -= snapshotDelta;
+                snapshotAccumulator -= snapshotDelta;
             }
-        } else if (currentState == State.Playback)
+        }
+        else if (currentState == State.Playback)
         {
-            snapshotDeltaTotal += Time.fixedDeltaTime;
-            if(snapshotDeltaTotal >= snapshotDelta)
-            {
-                time += Time.fixedDeltaTime;
-                if(time  >= nextSnapshotTime && hasNextSnapshot)
-                {
-                    time += Time.fixedDeltaTime;
-                    LoadNextSnapshot();
-                    Debug.Log("d");
-                    snapshotIndex++;
-                    
-                }
-                snapshotDeltaTotal -= snapshotDelta;
-            }
-            
+            ApplySnapshotsUpTo(CurrentTime);
+            TimelineEventRecorder.instance?.ProcessEventsUpTo(CurrentTime);
         }
     }
 
-    public void preparePlayback()
-    {
-        time = 0;
-        snapshotDeltaTotal = 0;
-        snapshotIndex = 0;
-        nextSnapshotTime = 0;
-        hasNextSnapshot = true;
-    }
-
-    
-    private float time = 0;
-    // Creates snapshot data and saves the info to it. Then adds to container
     private void TakeSnapshot()
     {
-        time += Time.fixedDeltaTime;
-        SnapshotData snapshotData = new SnapshotData(time);
+        SnapshotData snapshotData = new SnapshotData(CurrentTime);
 
-        foreach(IReplayObject replayObject in replayObjects)
+        foreach (IReplayObject replayObject in replayObjects)
         {
-            snapshotData.AddObjectSnapshot(((UnityEngine.Object)replayObject).name, replayObject.SaveSnapshot());
+            if (replayObject == null)
+            {
+                continue;
+            }
+
+            SnapshotInfo info = replayObject.SaveSnapshot();
+            snapshotData.AddObjectSnapshot(replayObject.GetId(), info);
         }
-        
+
         replayContainer.AddSnapshot(snapshotData);
-        snapshotIndex++;
+    }
+
+    private void ApplySnapshotsUpTo(float targetTime)
+    {
+        while (replayContainer.GetSnapshot(playbackSnapshotIndex, out SnapshotData snapshot) &&
+               snapshot.frameTime <= targetTime)
+        {
+            foreach (IReplayObject replayObject in replayObjects)
+            {
+                if (replayObject == null)
+                {
+                    continue;
+                }
+
+                if (snapshot.GetObjectSnapshot(replayObject.GetId(), out SnapshotInfo info))
+                {
+                    replayObject.LoadSnapshot(info);
+                }
+            }
+
+            playbackSnapshotIndex++;
+        }
     }
 }
-// Interface to allow different classes to communicate
+
 public interface IReplayObject
 {
     SnapshotInfo SaveSnapshot();
     void LoadSnapshot(SnapshotInfo snapshotInfo);
     string GetId();
 }
+
 [System.Serializable]
-// Snapshot data of a frame
 public struct SnapshotData
 {
     public float frameTime;
 
+    [System.NonSerialized]
     public Dictionary<string, SnapshotInfo> snapshots;
 
     [SerializeReference]
@@ -156,10 +185,16 @@ public struct SnapshotData
         snapshots = new Dictionary<string, SnapshotInfo>();
         snapshotList = new List<SnapshotInfo>();
     }
+
     public void AddObjectSnapshot(string id, SnapshotInfo data)
     {
-        
-        snapshots.Add(id, data);
+        if (data == null)
+        {
+            return;
+        }
+
+        data.id = id;
+        snapshots[id] = data;
         snapshotList.Add(data);
     }
 
@@ -169,26 +204,35 @@ public struct SnapshotData
         {
             BuildDictionary();
         }
+
         return snapshots.TryGetValue(id, out info);
     }
+
     private void BuildDictionary()
     {
         snapshots = new Dictionary<string, SnapshotInfo>();
-        foreach(SnapshotInfo snap in snapshotList)
+
+        if (snapshotList == null)
         {
-            
-            snapshots.Add(snap.id, snap);
+            return;
+        }
+
+        foreach (SnapshotInfo snapshot in snapshotList)
+        {
+            if (snapshot != null && !string.IsNullOrEmpty(snapshot.id))
+            {
+                snapshots[snapshot.id] = snapshot;
+            }
         }
     }
-    
 }
-// Base snapshot info
+
 [System.Serializable]
 public class SnapshotInfo
 {
     public string id;
 }
-// Player snapshot info
+
 [System.Serializable]
 public class PlayerSnapshotInfo : SnapshotInfo
 {
@@ -196,4 +240,3 @@ public class PlayerSnapshotInfo : SnapshotInfo
     public Quaternion rotation;
     public PlayerMovement.MovementState state;
 }
-

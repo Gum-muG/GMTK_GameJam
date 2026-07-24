@@ -14,11 +14,12 @@ GameObject:
   - component: {fileID: 9220157128565356705}
   - component: {fileID: 7160835728012817289}
   - component: {fileID: 8948256116952879571}
-  - component: {fileID: 3026515622932747358}
-  - component: {fileID: 867428864299028079}
   - component: {fileID: 7269195980498048668}
-  m_Layer: 0
-  m_Name: Player
+  - component: {fileID: 8804094355534363920}
+  - component: {fileID: 7032514083916573139}
+  - component: {fileID: 2308392732051077849}
+  m_Layer: 3
+  m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,6 +111,9 @@ MonoBehaviour:
   maxSlopeAngle: 40
   forward: {fileID: 2974202985908990489}
   movementState: 0
+  coyoteTime: 0.03
+  fallMultiplier: 2.5
+  clone: {fileID: 0}
   wallRunning: 0
 --- !u!114 &7160835728012817289
 MonoBehaviour:
@@ -137,6 +141,7 @@ MonoBehaviour:
   forward: {fileID: 2974202985908990489}
   cameraTransform: {fileID: 4665717192488240138}
   playerCamera: {fileID: 2123935322467623187}
+  dashing: {fileID: 8948256116952879571}
 --- !u!114 &8948256116952879571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,40 +157,6 @@ MonoBehaviour:
   playerCamera: {fileID: 2123935322467623187}
   forward: {fileID: 2974202985908990489}
   dashTime: 0.3
---- !u!114 &3026515622932747358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3920279370166423282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16f18059c5a0473419e8a6323c3e5c49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterControlState
---- !u!114 &867428864299028079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3920279370166423282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c06ba66b9dd4b114e8dc47f1d5643627, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WorldPlacement
-  spawner: {fileID: 0}
-  cameraTransform: {fileID: 4665717192488240138}
-  placementCollisionLayers:
-    serializedVersion: 2
-    m_Bits: 192
-  placementDistance: 10
-  minPlacementDistance: 2
-  maxPlacementDistance: 30
-  scrollSpeed: 3
-  rotationStep: 90
 --- !u!114 &7269195980498048668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,10 +171,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileShooter
   projectilePrefab: {fileID: 1963319867357659209, guid: 2bb9d052374dfe846a8090d5151434cf, type: 3}
   firePoint: {fileID: 1737840070222051519}
-  cameraTransform: {fileID: 4665717192488240138}
+  aimTransform: {fileID: 4665717192488240138}
   projectileSpeed: 30
   fireCooldown: 0.25
-  playerCollider: {fileID: 0}
+--- !u!114 &8804094355534363920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920279370166423282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18f0565a20f8e6845bc55955d4a497b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerShooting
+  projectileShooter: {fileID: 7269195980498048668}
+--- !u!114 &7032514083916573139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920279370166423282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6698e62ae5c975f469df5d38009bcb52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterReplayTrack
+  replayContainer: {fileID: 0}
+  snapshotDelta: 0.02
+  discoverReplayObjectsInChildren: 1
+--- !u!114 &2308392732051077849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920279370166423282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34e768ef0f0efe44b5c2620def6b64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterBuildEventTrack
+  events: []
 --- !u!1 &4453874182994850456
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,7 +227,7 @@ GameObject:
   - component: {fileID: 6250167625068384810}
   - component: {fileID: 894841453304329249}
   - component: {fileID: 3751178050320519270}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,7 +338,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 813477649169901427}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CameraHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,11 +371,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4665717192488240138}
   - component: {fileID: 3506711165307328073}
-  - component: {fileID: 406004995867373134}
   - component: {fileID: 7045022477727434929}
   - component: {fileID: 2123935322467623187}
-  m_Layer: 0
-  m_Name: Camera
+  m_Layer: 3
+  m_Name: FireCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -437,14 +447,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &406004995867373134
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4660963469309390088}
-  m_Enabled: 1
 --- !u!114 &7045022477727434929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,7 +517,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1737840070222051519}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -531,7 +533,7 @@ Transform:
   m_GameObject: {fileID: 8286681851685795948}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

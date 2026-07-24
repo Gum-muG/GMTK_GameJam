@@ -3,29 +3,33 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    private bool recording = false;
+    private bool recording;
 
-    public void Awake()
+    private void Awake()
     {
         instance = this;
     }
 
-    public void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            if (!recording) {
-                ReplayManager.instance.StartRecording(); 
+            if (!recording)
+            {
+                ReplayManager.instance.StartRecording();
                 recording = true;
             }
-            else {
-                ReplayManager.instance.Stop(); 
+            else
+            {
+                ReplayManager.instance.Stop();
                 recording = false;
             }
-        } 
-        if(Input.GetKeyDown(KeyCode.P))
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
         {
             ReplayManager.instance.StartPlayback();
+            recording = false;
         }
     }
 }
