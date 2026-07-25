@@ -30,16 +30,7 @@ public class enemyAI : MonoBehaviour
 
     private void Awake()
     {
-        GameObject playerObject = GameObject.Find("Player");
-
-        if (playerObject != null)
-        {
-            player = playerObject.transform;
-        }
-        else
-        {
-            Debug.LogError("Could not find a GameObject named Player.");
-        }
+        
 
         agent = GetComponent<NavMeshAgent>();
         projectileShooterScript = GetComponentInParent<ProjectileShooter>();
