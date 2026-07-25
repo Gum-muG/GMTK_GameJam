@@ -30,9 +30,16 @@ public class WallRunning : MonoBehaviour
     private PlayerMovement playerMovement;
     private Rigidbody rb;
 
-    private bool touchingWall;
     private Vector3 wallHitNormal;
-    float wallStickForce = 30f;
+    private float wallStickForce = 30f;
+
+    private int wallNum;
+
+    [SerializeField] private float wallDetachDelay = 0.15f;
+    private float wallDetachTimer;
+
+    [SerializeField] private float wallJumpCoyoteTime = 0.15f;
+    private float wallJumpCoyoteTimer;
 
     private void Start()
     {
@@ -53,11 +60,12 @@ public class WallRunning : MonoBehaviour
         }
     }
 
-    // Minimal swap cleanup: disabling WallRunning must not leave the
-    // character in a wall-run physics/camera state.
     private void OnDisable()
     {
-        touchingWall = false;
+        wallNum = 0;
+        wallDetachTimer = 0f;
+        wallJumpCoyoteTimer = 0f;
+
         exitingWall = false;
         wallRunTimer = 0f;
         exitWallTimer = 0f;
@@ -86,25 +94,52 @@ public class WallRunning : MonoBehaviour
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
 
+        if (!playerMovement.wallRunning &&
+            wallJumpCoyoteTimer > 0f)
+        {
+            wallJumpCoyoteTimer -= Time.deltaTime;
+        }
+
+        // Wall jump while wall-running or shortly after leaving the wall.
+        // Ground jumps are still handled by PlayerMovement.
+        if (Input.GetKeyDown(KeyCode.Space) &&
+            !playerMovement.isGrounded &&
+            (playerMovement.wallRunning ||
+             wallJumpCoyoteTimer > 0f))
+        {
+            if (playerMovement.wallRunning)
+            {
+                StopWallRun();
+            }
+
+            WallRunJump();
+
+            wallJumpCoyoteTimer = 0f;
+
+            return;
+        }
+
         if (playerMovement.wallRunning)
         {
             wallRunTimer -= Time.deltaTime;
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (wallNum <= 0)
             {
-                StopWallRun();
-                WallRunJump();
-                return;
+                wallDetachTimer += Time.deltaTime;
+
+                if (wallDetachTimer >= wallDetachDelay)
+                {
+                    StopWallRun();
+
+                    exitingWall = true;
+                    exitWallTimer = exitWallTime;
+
+                    return;
+                }
             }
-
-            if (!touchingWall)
+            else
             {
-                StopWallRun();
-
-                exitingWall = true;
-                exitWallTimer = exitWallTime;
-
-                return;
+                wallDetachTimer = 0f;
             }
 
             if (wallRunTimer <= 0f)
@@ -117,7 +152,7 @@ public class WallRunning : MonoBehaviour
                 return;
             }
         }
-        else if (touchingWall &&
+        else if (wallNum > 0 &&
                  yIn > 0f &&
                  !playerMovement.isGrounded &&
                  !exitingWall)
@@ -139,10 +174,14 @@ public class WallRunning : MonoBehaviour
     private void StartWallRun()
     {
         activeWallNormal = wallHitNormal.normalized;
+
         playerCamera.SetWallCameraOffset(activeWallNormal);
 
         playerMovement.wallRunning = true;
+
         wallRunTimer = maxWallRunTime;
+        wallDetachTimer = 0f;
+        wallJumpCoyoteTimer = 0f;
 
         rb.linearVelocity = new Vector3(
             rb.linearVelocity.x,
@@ -200,7 +239,11 @@ public class WallRunning : MonoBehaviour
     private void StopWallRun()
     {
         playerMovement.wallRunning = false;
+
         rb.useGravity = true;
+
+        wallDetachTimer = 0f;
+        wallJumpCoyoteTimer = wallJumpCoyoteTime;
 
         playerCamera.EndWallRunClamp();
         playerCamera.ClearWallCameraOffset();
@@ -245,27 +288,69 @@ public class WallRunning : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == 7)
+        if (collision.gameObject.layer != 7)
         {
-            touchingWall = true;
-            wallHitNormal = collision.contacts[0].normal;
+            return;
         }
+
+        wallNum++;
+        wallDetachTimer = 0f;
+
+        Debug.Log(
+            $"ENTER | " +
+            $"Object: {collision.gameObject.name} | " +
+            $"Collider: {collision.collider.name} | " +
+            $"ID: {collision.collider.GetEntityId()} | " +
+            $"wallNum: {wallNum} | " +
+            $"Time: {Time.time:F4}");
+
+        UpdateWallNormal(collision);
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.layer == 7)
+        if (collision.gameObject.layer != 7)
         {
-            touchingWall = true;
-            wallHitNormal = collision.contacts[0].normal;
+            return;
         }
+
+        wallDetachTimer = 0f;
+
+        UpdateWallNormal(collision);
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.layer == 7)
+        if (collision.gameObject.layer != 7)
         {
-            touchingWall = false;
+            return;
+        }
+
+        wallNum = Mathf.Max(0, wallNum - 1);
+
+        Debug.Log(
+            $"EXIT | " +
+            $"Object: {collision.gameObject.name} | " +
+            $"Collider: {collision.collider.name} | " +
+            $"ID: {collision.collider.GetEntityId()} | " +
+            $"wallNum: {wallNum} | " +
+            $"Time: {Time.time:F4}");
+    }
+
+    private void UpdateWallNormal(Collision collision)
+    {
+        if (collision.contactCount <= 0)
+        {
+            return;
+        }
+
+        wallHitNormal =
+            collision.GetContact(0).normal.normalized;
+
+        if (playerMovement != null &&
+            playerMovement.wallRunning)
+        {
+            activeWallNormal = wallHitNormal;
         }
     }
 }
