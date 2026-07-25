@@ -33,6 +33,7 @@ public class CharacterSwapManager : MonoBehaviour
     [SerializeField] private PlatformSpawner platformSpawner;
 
     [Header("Timeline")]
+    [SerializeField] private float timeBudget;
     [SerializeField] private PlayableCharacter startingCharacter =
         PlayableCharacter.Ice;
 
@@ -70,7 +71,7 @@ public class CharacterSwapManager : MonoBehaviour
 
     public float CurrentTime =>
         GetCharacterTime(activeCharacter);
-
+    public float TimeBudget => timeBudget;
     public float IceTime => iceTime;
     public float FireTime => fireTime;
 
@@ -157,6 +158,7 @@ public class CharacterSwapManager : MonoBehaviour
         float previousTime = CurrentTime;
         float nextTime =
             previousTime + Time.fixedDeltaTime;
+        timeBudget -= Time.fixedDeltaTime;
 
         if (levelDuration > 0f)
         {

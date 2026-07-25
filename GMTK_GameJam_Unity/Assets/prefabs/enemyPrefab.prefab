@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 2748019992705281690}
   - component: {fileID: 7500864622224313474}
   - component: {fileID: 4757711569770845651}
-  - component: {fileID: 3774626947920567688}
   - component: {fileID: 2064321634116576025}
   - component: {fileID: 3083061765976238716}
   - component: {fileID: 649616728392334613}
@@ -115,33 +114,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &3774626947920567688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146585524325527479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0195f17e94471d43a8e401d743cfcd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::enemyAI
-  agent: {fileID: 0}
-  player: {fileID: 0}
-  Ground:
-    serializedVersion: 2
-    m_Bits: 64
-  Player:
-    serializedVersion: 2
-    m_Bits: 8
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 5
-  timeBetweenAttacks: 1
-  sightRange: 15
-  attackRange: 10
-  playerInSightRange: 0
-  playerInAttackRange: 0
 --- !u!114 &2064321634116576025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,6 +192,7 @@ MonoBehaviour:
   agent: {fileID: 3083061765976238716}
   gameplayColliders: []
   renderers: []
+  enemyBody: {fileID: 0}
 --- !u!1 &3468633079764031602
 GameObject:
   m_ObjectHideFlags: 0

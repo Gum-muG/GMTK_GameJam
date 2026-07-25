@@ -34,6 +34,11 @@ public class TimelineObject : MonoBehaviour
         timelineId = Guid.NewGuid().ToString("N");
     }
 
+    private void Update()
+    {
+        Debug.Log("Name: " + name + ", ID: " + TimelineId);
+    }
+
     private void EnsureId()
     {
         if (string.IsNullOrWhiteSpace(timelineId))
