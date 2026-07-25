@@ -1,42 +1,38 @@
-using System;
 using UnityEngine;
 
 public class Dashing : MonoBehaviour
 {
     public PlayerCamera playerCamera;
     public Transform forward;
+
     private PlayerMovement playerMovement;
     private Rigidbody rb;
+
     public float dashTime;
+
     private float dashTimer;
     private bool canDash = true;
     private bool isDashing;
-    private CharacterControlState controlState;
 
     public bool IsDashing => isDashing;
-    void Start()
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
         playerMovement = GetComponent<PlayerMovement>();
         dashTimer = dashTime;
-
-        //getting components
-        controlState = GetComponent<CharacterControlState>();
     }
 
-    // Update is called once per frameaa
-    void Update()
+    private void Update()
     {
-        if (!controlState.IsPlayerControlled)
-        return;
-
-        if (canDash && Input.GetKeyDown(KeyCode.LeftControl))
+        if (canDash &&
+            Input.GetKeyDown(KeyCode.LeftControl))
         {
             canDash = false;
             isDashing = true;
         }
 
-        if (isDashing && dashTimer > 0)
+        if (isDashing && dashTimer > 0f)
         {
             dashTimer -= Time.deltaTime;
         }
@@ -46,7 +42,9 @@ public class Dashing : MonoBehaviour
             isDashing = false;
         }
 
-        if (!canDash && playerMovement.isGrounded && dashTimer <= 0)
+        if (!canDash &&
+            playerMovement.isGrounded &&
+            dashTimer <= 0f)
         {
             canDash = true;
             isDashing = false;
@@ -56,13 +54,24 @@ public class Dashing : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!controlState.IsPlayerControlled)
-            return;
-
         if (!isDashing || dashTimer <= 0f)
+        {
             return;
+        }
 
-        rb.AddForce(forward.forward * Mathf.Pow(playerMovement.dashSpeed, dashTimer / dashTime * 2f), ForceMode.Force);
+        rb.AddForce(
+            forward.forward *
+            Mathf.Pow(
+                playerMovement.dashSpeed,
+                dashTimer / dashTime * 2f),
+            ForceMode.Force);
+    }
+
+    // Minimal swap cleanup: a disabled replay character must not resume
+    // an unfinished dash when it becomes controllable again.
+    private void OnDisable()
+    {
+        ResetDashCooldown();
     }
 
     public void ResetDashCooldown()

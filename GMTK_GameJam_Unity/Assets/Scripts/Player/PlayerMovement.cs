@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour, IReplayObject
@@ -7,6 +6,7 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     public float walkSpeed;
     public float sprintSpeed;
     public float wallRunSpeed;
+
     [Tooltip("Test")]
     public float dashSpeed;
 
@@ -35,7 +35,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     Vector3 moveDir;
 
     Rigidbody rb;
-    private CharacterControlState controlState;
 
     public MovementState movementState;
     public float coyoteTime = .03f;
@@ -43,6 +42,8 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     private float coyoteTimeCounter;
     public float fallMultiplier = 2.5f;
 
+    // Kept only so existing Inspector data is not lost.
+    // The modular replay system does not use this field.
     public Transform clone;
 
     public enum MovementState
@@ -58,21 +59,28 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        if (rb == null)
+        {
+            Debug.LogError($"{name}: PlayerMovement requires a Rigidbody.");
+            enabled = false;
+            return;
+        }
+
         rb.freezeRotation = true;
 
-        //getting components
-        controlState = GetComponent<CharacterControlState>();
-
-        ReplayManager.instance.Register(this);
+        // Do not register with the old ReplayManager.
+        // CharacterReplayTrack discovers this IReplayObject automatically.
     }
 
     private void Update()
     {
-        if (!controlState.IsPlayerControlled){
-        return;
-        }
+        isGrounded = Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            playerHeight * 0.5f + 0.2f,
+            groundLayer);
 
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
         if (isGrounded)
         {
             coyoteTimeCounter = coyoteTime;
@@ -85,26 +93,29 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
 
-        if(wallRunning)
+        if (wallRunning)
         {
             movementState = MovementState.WALL_RUNNING;
-            speed = wallRunSpeed; 
+            speed = wallRunSpeed;
         }
-
-        else if(isGrounded && Input.GetKey(sprintKey))
+        else if (isGrounded && Input.GetKey(sprintKey))
         {
             movementState = MovementState.SPRINTING;
             speed = sprintSpeed;
-        } else if (isGrounded)
+        }
+        else if (isGrounded)
         {
             movementState = MovementState.WALKING;
             speed = walkSpeed;
-        } else
+        }
+        else
         {
             movementState = MovementState.AIR;
         }
 
-        if(Input.GetKeyDown(jumpKey) && canJump && (coyoteTimeCounter > 0f || isGrounded))
+        if (Input.GetKeyDown(jumpKey) &&
+            canJump &&
+            (coyoteTimeCounter > 0f || isGrounded))
         {
             Jump();
             coyoteTimeCounter = 0f;
@@ -114,122 +125,173 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         if (OnSlope() && !exitingSlope)
         {
             if (rb.linearVelocity.magnitude > speed)
-                rb.linearVelocity = rb.linearVelocity.normalized * speed;
+            {
+                rb.linearVelocity =
+                    rb.linearVelocity.normalized * speed;
+            }
         }
-
         else
         {
-            Vector3 baseVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            if(baseVel.magnitude > speed)
+            Vector3 baseVel = new Vector3(
+                rb.linearVelocity.x,
+                0f,
+                rb.linearVelocity.z);
+
+            if (baseVel.magnitude > speed)
             {
-                Vector3 normalizedVel = baseVel.normalized * speed;
-                rb.linearVelocity = new Vector3(normalizedVel.x, rb.linearVelocity.y, normalizedVel.z);
+                Vector3 normalizedVel =
+                    baseVel.normalized * speed;
+
+                rb.linearVelocity = new Vector3(
+                    normalizedVel.x,
+                    rb.linearVelocity.y,
+                    normalizedVel.z);
             }
         }
 
         if (isGrounded)
+        {
             rb.linearDamping = groundDrag;
+        }
         else
+        {
             rb.linearDamping = 0;
-
+        }
     }
 
     private void FixedUpdate()
     {
-        if (!controlState.IsPlayerControlled)
-        return;
-
+        // Original movement logic left unchanged.
         moveDir = forward.forward * yIn + forward.right * xIn;
 
-        if (wallRunning){
+        if (wallRunning)
+        {
             moveDir = Vector3.zero;
         }
-        //have seperate wall layers, one for runnable walls, one for non-runnable walls
-        //swapping over and systems in place for timeline
-        //dodge roll
-        //push
-        //shield
-        //reset item
 
-        //timer budget
-        //map
-        //death marker mechanic
-
-    
-        if (rb.linearVelocity.y < 0f && !isGrounded && !wallRunning)
+        if (rb.linearVelocity.y < 0f &&
+            !isGrounded &&
+            !wallRunning)
         {
-            rb.AddForce(Vector3.down * fallMultiplier, ForceMode.Acceleration);
+            rb.AddForce(
+                Vector3.down * fallMultiplier,
+                ForceMode.Acceleration);
         }
-        
+
         if (OnSlope() && !exitingSlope)
         {
-            rb.AddForce(GetSlopeTargetMove() * speed * 20f, ForceMode.Force);
+            rb.AddForce(
+                GetSlopeTargetMove() * speed * 20f,
+                ForceMode.Force);
 
             if (rb.linearVelocity.y > 0)
             {
-                rb.AddForce(Vector3.down * 30f, ForceMode.Force);
+                rb.AddForce(
+                    Vector3.down * 30f,
+                    ForceMode.Force);
             }
         }
+        else if (isGrounded)
+        {
+            rb.AddForce(
+                moveDir.normalized * speed * 10,
+                ForceMode.Force);
+        }
+        else
+        {
+            rb.AddForce(
+                moveDir.normalized * speed * 10 * airControl,
+                ForceMode.Force);
+        }
 
-        else if(isGrounded)
-            rb.AddForce(moveDir.normalized * speed * 10, ForceMode.Force);
-        else 
-            rb.AddForce(moveDir.normalized * speed * 10 * airControl, ForceMode.Force);
-
-        if(!wallRunning) rb.useGravity = !OnSlope();
+        if (!wallRunning)
+        {
+            rb.useGravity = !OnSlope();
+        }
     }
 
     private void Jump()
     {
         exitingSlope = true;
         canJump = false;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+        rb.linearVelocity = new Vector3(
+            rb.linearVelocity.x,
+            0f,
+            rb.linearVelocity.z);
+
+        rb.AddForce(
+            transform.up * jumpHeight,
+            ForceMode.Impulse);
     }
+
     private void ResetJump()
     {
         canJump = true;
         exitingSlope = false;
     }
+
     private bool OnSlope()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f, groundLayer, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(
+                transform.position,
+                Vector3.down,
+                out slopeHit,
+                playerHeight * 0.5f + 0.3f,
+                groundLayer,
+                QueryTriggerInteraction.Ignore))
         {
-            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            float angle =
+                Vector3.Angle(Vector3.up, slopeHit.normal);
+
             return angle < maxSlopeAngle && angle != 0;
         }
 
         return false;
     }
+
     private Vector3 GetSlopeTargetMove()
     {
-        return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
+        return Vector3.ProjectOnPlane(
+            moveDir,
+            slopeHit.normal).normalized;
     }
 
     public SnapshotInfo SaveSnapshot()
     {
-        PlayerSnapshotInfo playerSnapshotInfo = new PlayerSnapshotInfo()
+        return new PlayerSnapshotInfo
         {
             id = GetId(),
             position = transform.position,
-            rotation = forward.rotation,
+
+            // Record the character body, not the camera/orientation transform.
+            rotation = transform.rotation,
+
             state = movementState
         };
-        return playerSnapshotInfo;
     }
 
     public void LoadSnapshot(SnapshotInfo info)
     {
-        PlayerSnapshotInfo playerSnapshot = (PlayerSnapshotInfo) info;
-        clone.rotation = playerSnapshot.rotation;
-        clone.position = playerSnapshot.position;
+        PlayerSnapshotInfo playerSnapshot =
+            info as PlayerSnapshotInfo;
+
+        if (playerSnapshot == null)
+        {
+            return;
+        }
+
+        // Replay this character directly.
+        // Do not move "clone" and do not rotate "forward".
+        transform.SetPositionAndRotation(
+            playerSnapshot.position,
+            playerSnapshot.rotation);
+
+        movementState = playerSnapshot.state;
     }
 
     public string GetId()
     {
         return name;
     }
-
-    
 }

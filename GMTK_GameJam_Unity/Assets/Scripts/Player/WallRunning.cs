@@ -29,7 +29,6 @@ public class WallRunning : MonoBehaviour
 
     private PlayerMovement playerMovement;
     private Rigidbody rb;
-    private CharacterControlState controlState;
 
     private bool touchingWall;
     private Vector3 wallHitNormal;
@@ -39,25 +38,46 @@ public class WallRunning : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerMovement = GetComponent<PlayerMovement>();
-        controlState = GetComponent<CharacterControlState>();
     }
 
     private void Update()
     {
-        if (!controlState.IsPlayerControlled)
-            return;
-
         StateMachine();
     }
 
     private void FixedUpdate()
     {
-        if (!controlState.IsPlayerControlled)
-            return;
-
         if (playerMovement.wallRunning)
         {
             WallRun();
+        }
+    }
+
+    // Minimal swap cleanup: disabling WallRunning must not leave the
+    // character in a wall-run physics/camera state.
+    private void OnDisable()
+    {
+        touchingWall = false;
+        exitingWall = false;
+        wallRunTimer = 0f;
+        exitWallTimer = 0f;
+
+        if (playerMovement != null)
+        {
+            playerMovement.wallRunning = false;
+        }
+
+        if (rb != null)
+        {
+            rb.useGravity = true;
+        }
+
+        if (playerCamera != null)
+        {
+            playerCamera.EndWallRunClamp();
+            playerCamera.ClearWallCameraOffset();
+            playerCamera.FOV(70f);
+            playerCamera.Tilt(0f);
         }
     }
 
@@ -97,7 +117,10 @@ public class WallRunning : MonoBehaviour
                 return;
             }
         }
-        else if (touchingWall && yIn > 0f && !playerMovement.isGrounded && !exitingWall)
+        else if (touchingWall &&
+                 yIn > 0f &&
+                 !playerMovement.isGrounded &&
+                 !exitingWall)
         {
             StartWallRun();
         }
@@ -121,13 +144,17 @@ public class WallRunning : MonoBehaviour
         playerMovement.wallRunning = true;
         wallRunTimer = maxWallRunTime;
 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(
+            rb.linearVelocity.x,
+            0f,
+            rb.linearVelocity.z);
 
         playerCamera.BeginWallRunClamp(activeWallNormal);
 
         playerCamera.FOV(90f);
 
-        bool wallIsOnRight = Vector3.Dot(activeWallNormal, forward.right) < 0f;
+        bool wallIsOnRight =
+            Vector3.Dot(activeWallNormal, forward.right) < 0f;
 
         if (wallIsOnRight)
         {
@@ -143,20 +170,31 @@ public class WallRunning : MonoBehaviour
     {
         rb.useGravity = false;
 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(
+            rb.linearVelocity.x,
+            0f,
+            rb.linearVelocity.z);
 
-        Vector3 wallForward = Vector3.Cross(activeWallNormal, transform.up);
+        Vector3 wallForward =
+            Vector3.Cross(activeWallNormal, transform.up);
 
-        if ((forward.forward - wallForward).magnitude > (forward.forward + wallForward).magnitude)
+        if ((forward.forward - wallForward).magnitude >
+            (forward.forward + wallForward).magnitude)
         {
             wallForward = -wallForward;
         }
 
-        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+        rb.AddForce(
+            wallForward * wallRunForce,
+            ForceMode.Force);
 
-        rb.AddForce(-activeWallNormal * wallStickForce, ForceMode.Force);
+        rb.AddForce(
+            -activeWallNormal * wallStickForce,
+            ForceMode.Force);
 
-        rb.AddForce(transform.up * gravityCounterforce, ForceMode.Force);
+        rb.AddForce(
+            transform.up * gravityCounterforce,
+            ForceMode.Force);
     }
 
     private void StopWallRun()
@@ -178,19 +216,30 @@ public class WallRunning : MonoBehaviour
 
         Vector3 lookDirection = cameraTransform.forward;
 
-        lookDirection.y = Mathf.Max(lookDirection.y, 0f);
+        lookDirection.y =
+            Mathf.Max(lookDirection.y, 0f);
 
         lookDirection.Normalize();
 
-        Vector3 baseForce = transform.up * wallJumpUpForce + activeWallNormal * wallJumpSideForce;
+        Vector3 baseForce =
+            transform.up * wallJumpUpForce +
+            activeWallNormal * wallJumpSideForce;
 
-        Vector3 lookForce = lookDirection * lookDirectionForce;
+        Vector3 lookForce =
+            lookDirection * lookDirectionForce;
 
-        Vector3 forceToApply = baseForce + lookForce;
+        Vector3 forceToApply =
+            baseForce + lookForce;
 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(
+            rb.linearVelocity.x,
+            0f,
+            rb.linearVelocity.z);
 
-        rb.AddForce(forceToApply, ForceMode.Impulse);
+        rb.AddForce(
+            forceToApply,
+            ForceMode.Impulse);
+
         dashing.ResetDashCooldown();
     }
 

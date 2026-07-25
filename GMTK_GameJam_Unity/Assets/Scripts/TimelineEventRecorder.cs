@@ -5,51 +5,38 @@ public class TimelineEventRecorder : MonoBehaviour
 {
     public static TimelineEventRecorder instance;
 
-    [SerializeField]
-    private List<TimelineEventData> events = new List<TimelineEventData>();
+    [SerializeField] private PlatformSpawner platformSpawner;
+    [SerializeField] private List<TimelineEventData> events = new List<TimelineEventData>();
 
-    private float timelineTime;
+    private readonly Dictionary<string, GameObject> spawnedObjects =
+        new Dictionary<string, GameObject>();
+
     private int nextEventIndex;
-
     private bool isRecording;
     private bool isPlayingBack;
 
-    public float CurrentTime => timelineTime;
+    public float CurrentTime => ReplayManager.instance == null
+        ? 0f
+        : ReplayManager.instance.CurrentTime;
 
     private void Awake()
     {
         instance = this;
     }
 
-    private void FixedUpdate()
-    {
-        if (isRecording)
-        {
-            timelineTime += Time.fixedDeltaTime;
-        }
-        else if (isPlayingBack)
-        {
-            timelineTime += Time.fixedDeltaTime;
-            ProcessEvents();
-        }
-    }
-
     public void StartRecording()
     {
-        timelineTime = 0f;
-        nextEventIndex = 0;
-
+        ClearSpawnedTimelineObjects();
         events.Clear();
-
+        nextEventIndex = 0;
         isRecording = true;
         isPlayingBack = false;
     }
 
     public void StartPlayback()
     {
-        timelineTime = 0f;
+        ClearSpawnedTimelineObjects();
         nextEventIndex = 0;
-
         isRecording = false;
         isPlayingBack = true;
     }
@@ -60,11 +47,12 @@ public class TimelineEventRecorder : MonoBehaviour
         isPlayingBack = false;
     }
 
-    public void RecordSpawnEvent(
+    public void RecordBuildEvent(
         string objectId,
-        string prefabId,
+        PlatformSpawner.BuildType buildType,
         Vector3 position,
-        Quaternion rotation)
+        Quaternion rotation,
+        GameObject spawnedObject)
     {
         if (!isRecording)
         {
@@ -73,22 +61,31 @@ public class TimelineEventRecorder : MonoBehaviour
 
         TimelineEventData newEvent = new TimelineEventData
         {
-            time = timelineTime,
-            eventType = TimelineEventType.Spawn,
+            time = CurrentTime,
+            eventType = TimelineEventType.Build,
             objectId = objectId,
-            prefabId = prefabId,
+            buildType = buildType,
             position = position,
             rotation = rotation
         };
 
         events.Add(newEvent);
+
+        if (spawnedObject != null)
+        {
+            spawnedObjects[objectId] = spawnedObject;
+        }
     }
 
-    private void ProcessEvents()
+    public void ProcessEventsUpTo(float timelineTime)
     {
-        while (
-            nextEventIndex < events.Count &&
-            timelineTime >= events[nextEventIndex].time)
+        if (!isPlayingBack)
+        {
+            return;
+        }
+
+        while (nextEventIndex < events.Count &&
+               events[nextEventIndex].time <= timelineTime)
         {
             ReplayEvent(events[nextEventIndex]);
             nextEventIndex++;
@@ -99,18 +96,50 @@ public class TimelineEventRecorder : MonoBehaviour
     {
         switch (timelineEvent.eventType)
         {
-            case TimelineEventType.Spawn:
-                Debug.Log(
-                    $"Spawn {timelineEvent.prefabId} " +
-                    $"at {timelineEvent.time} seconds");
+            case TimelineEventType.Build:
+                if (platformSpawner == null)
+                {
+                    Debug.LogError("TimelineEventRecorder needs a PlatformSpawner reference.");
+                    return;
+                }
+
+                // The ID guard prevents a recorded event from spawning twice.
+                if (spawnedObjects.ContainsKey(timelineEvent.objectId))
+                {
+                    return;
+                }
+
+                GameObject spawnedObject = platformSpawner.SpawnRecorded(
+                    timelineEvent.buildType,
+                    timelineEvent.position,
+                    timelineEvent.rotation,
+                    timelineEvent.objectId);
+
+                if (spawnedObject != null)
+                {
+                    spawnedObjects[timelineEvent.objectId] = spawnedObject;
+                }
                 break;
         }
+    }
+
+    private void ClearSpawnedTimelineObjects()
+    {
+        foreach (GameObject spawnedObject in spawnedObjects.Values)
+        {
+            if (spawnedObject != null)
+            {
+                Destroy(spawnedObject);
+            }
+        }
+
+        spawnedObjects.Clear();
     }
 }
 
 public enum TimelineEventType
 {
-    Spawn
+    Build
 }
 
 [System.Serializable]
@@ -118,10 +147,8 @@ public struct TimelineEventData
 {
     public float time;
     public TimelineEventType eventType;
-
     public string objectId;
-    public string prefabId;
-
+    public PlatformSpawner.BuildType buildType;
     public Vector3 position;
     public Quaternion rotation;
 }
