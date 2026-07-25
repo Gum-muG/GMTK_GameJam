@@ -67,8 +67,6 @@ public class Dashing : MonoBehaviour
             ForceMode.Force);
     }
 
-    // Minimal swap cleanup: a disabled replay character must not resume
-    // an unfinished dash when it becomes controllable again.
     private void OnDisable()
     {
         ResetDashCooldown();

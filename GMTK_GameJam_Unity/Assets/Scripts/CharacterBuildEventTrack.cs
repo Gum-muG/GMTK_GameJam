@@ -32,7 +32,6 @@ public class CharacterBuildEventTrack : MonoBehaviour
         isPlayingBack = false;
     }
 
-    // Preserves existing events and resumes appending new events.
     public void ResumeRecording(PlatformSpawner spawner)
     {
         platformSpawner = spawner;
@@ -45,8 +44,6 @@ public class CharacterBuildEventTrack : MonoBehaviour
         BeginNewRecording(spawner);
     }
 
-    // Starts processing future events after startTime.
-    // World reconstruction is handled separately by RebuildWorldUpTo.
     public void BeginPlayback(
         PlatformSpawner spawner,
         float startTime)
@@ -84,17 +81,14 @@ public class CharacterBuildEventTrack : MonoBehaviour
             return false;
         }
 
-        BuildReplayEventData newEvent =
-            new BuildReplayEventData
-            {
-                time = timelineTime,
-                objectId = objectId,
-                buildType = buildType,
-                position = position,
-                rotation = rotation
-            };
-
-        events.Add(newEvent);
+        events.Add(new BuildReplayEventData
+        {
+            time = timelineTime,
+            objectId = objectId,
+            buildType = buildType,
+            position = position,
+            rotation = rotation
+        });
 
         if (spawnedObject != null)
         {
@@ -119,8 +113,6 @@ public class CharacterBuildEventTrack : MonoBehaviour
         }
     }
 
-
-    // Reconstructs this track's construction state
     public void RebuildWorldUpTo(
         PlatformSpawner spawner,
         float timelineTime)
@@ -140,13 +132,16 @@ public class CharacterBuildEventTrack : MonoBehaviour
 
     public void ClearSpawnedObjects()
     {
-        foreach (GameObject spawnedObject in spawnedObjects.Values)
+        foreach (KeyValuePair<string, GameObject> pair in spawnedObjects)
         {
-            if (spawnedObject != null)
+            if (platformSpawner != null)
             {
-                // Disable immediately so an object being rebuilt during swap cannot collide for the rest of this frame.
-                spawnedObject.SetActive(false);
-                Destroy(spawnedObject);
+                platformSpawner.DespawnRecorded(pair.Key);
+            }
+            else if (pair.Value != null)
+            {
+                pair.Value.SetActive(false);
+                Destroy(pair.Value);
             }
         }
 
@@ -166,14 +161,12 @@ public class CharacterBuildEventTrack : MonoBehaviour
         return index;
     }
 
-    private void ReplayBuildEvent(
-        BuildReplayEventData replayEvent)
+    private void ReplayBuildEvent(BuildReplayEventData replayEvent)
     {
         if (platformSpawner == null)
         {
             Debug.LogError(
                 $"{name}: CharacterBuildEventTrack needs a PlatformSpawner.");
-
             return;
         }
 
@@ -182,17 +175,15 @@ public class CharacterBuildEventTrack : MonoBehaviour
             return;
         }
 
-        GameObject spawnedObject =
-            platformSpawner.SpawnRecorded(
-                replayEvent.buildType,
-                replayEvent.position,
-                replayEvent.rotation,
-                replayEvent.objectId);
+        GameObject spawnedObject = platformSpawner.SpawnRecorded(
+            replayEvent.buildType,
+            replayEvent.position,
+            replayEvent.rotation,
+            replayEvent.objectId);
 
         if (spawnedObject != null)
         {
-            spawnedObjects[replayEvent.objectId] =
-                spawnedObject;
+            spawnedObjects[replayEvent.objectId] = spawnedObject;
         }
     }
 }

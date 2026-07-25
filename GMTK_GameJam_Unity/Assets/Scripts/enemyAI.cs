@@ -10,18 +10,13 @@ public class enemyAI : MonoBehaviour
 
     private ProjectileShooter projectileShooterScript;
 
-    //patrolling
     public Vector3 walkPoint;
     public float walkPointRange;
-
     private bool walkPointSet;
 
-    //attacking
     public float timeBetweenAttacks = 1f;
-
     private bool alreadyAttacked;
 
-    //ranges
     public float sightRange = 15f;
     public float attackRange = 10f;
 
@@ -30,17 +25,6 @@ public class enemyAI : MonoBehaviour
 
     private void Awake()
     {
-        GameObject playerObject = GameObject.Find("Player");
-
-        if (playerObject != null)
-        {
-            player = playerObject.transform;
-        }
-        else
-        {
-            Debug.LogError("Could not find a GameObject named Player.");
-        }
-
         agent = GetComponent<NavMeshAgent>();
         projectileShooterScript = GetComponentInParent<ProjectileShooter>();
 
@@ -57,6 +41,8 @@ public class enemyAI : MonoBehaviour
 
     private void Update()
     {
+        ResolveActivePlayer();
+
         if (player == null || agent == null)
         {
             return;
@@ -65,14 +51,12 @@ public class enemyAI : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(
             transform.position,
             sightRange,
-            Player
-        );
+            Player);
 
         playerInAttackRange = Physics.CheckSphere(
             transform.position,
             attackRange,
-            Player
-        );
+            Player);
 
         if (playerInAttackRange && playerInSightRange)
         {
@@ -85,6 +69,16 @@ public class enemyAI : MonoBehaviour
         else
         {
             Patrolling();
+        }
+    }
+
+    private void ResolveActivePlayer()
+    {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager != null && manager.ActiveCharacterTransform != null)
+        {
+            player = manager.ActiveCharacterTransform;
         }
     }
 
@@ -113,8 +107,8 @@ public class enemyAI : MonoBehaviour
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
 
-        Vector3 randomPosition = transform.position +
-                                 new Vector3(randomX, 0f, randomZ);
+        Vector3 randomPosition =
+            transform.position + new Vector3(randomX, 0f, randomZ);
 
         if (NavMesh.SamplePosition(
                 randomPosition,
@@ -135,11 +129,9 @@ public class enemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        // Stop moving while attacking.
         agent.isStopped = true;
         agent.ResetPath();
 
-        // Face the player without tilting vertically.
         Vector3 directionToPlayer = player.position - transform.position;
         directionToPlayer.y = 0f;
 
@@ -151,7 +143,6 @@ public class enemyAI : MonoBehaviour
         if (!alreadyAttacked && projectileShooterScript != null)
         {
             projectileShooterScript.FireProjectileAt(player);
-
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }

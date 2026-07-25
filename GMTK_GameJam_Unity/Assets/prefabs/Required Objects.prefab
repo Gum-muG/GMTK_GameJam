@@ -125,6 +125,7 @@ Transform:
   - {fileID: 4653184534710975803}
   - {fileID: 98072321622857600}
   - {fileID: 3553771471172439030}
+  - {fileID: 808678328190032441}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5230694287762076849
@@ -225,6 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSwapManager
   iceReplayTrack: {fileID: 0}
   iceBuildEventTrack: {fileID: 0}
+  iceWorldEventTrack: {fileID: 0}
   iceControlScripts:
   - {fileID: 0}
   - {fileID: 0}
@@ -234,6 +236,7 @@ MonoBehaviour:
   iceBody: {fileID: 0}
   fireReplayTrack: {fileID: 0}
   fireBuildEventTrack: {fileID: 0}
+  fireWorldEventTrack: {fileID: 0}
   fireControlScripts:
   - {fileID: 0}
   - {fileID: 0}
@@ -245,9 +248,56 @@ MonoBehaviour:
   startingCharacter: 0
   startAutomatically: 1
   hideUnrecordedCounterpart: 1
+  levelDuration: 60
   ignoreCharacterCollisions: 1
   swapKey: 9
   restartTakeKey: 8
+--- !u!1 &7418386366749328998
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 808678328190032441}
+  - component: {fileID: 6081165358114069936}
+  m_Layer: 0
+  m_Name: CharacterDeathManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &808678328190032441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7418386366749328998}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7913223826275509113}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6081165358114069936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7418386366749328998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc0b7505e51ff324689d5eaad7bcf130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterDeathManager
+  gameOverPanel: {fileID: 0}
+  unlockCursorOnGameOver: 1
 --- !u!1 &9074518252518405263
 GameObject:
   m_ObjectHideFlags: 0

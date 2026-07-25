@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
@@ -22,6 +23,9 @@ public class PlatformSpawner : MonoBehaviour
     public string previewLayerName = "Preview";
     public string groundLayerName = "Ground";
     public string wallLayerName = "Wall";
+
+    private readonly Dictionary<string, GameObject> spawnedObjectsById =
+        new Dictionary<string, GameObject>();
 
     private GameObject currentPreview;
     private int nextBuildId;
@@ -57,7 +61,6 @@ public class PlatformSpawner : MonoBehaviour
         MovePreview(previewPosition, previewRotation);
     }
 
-    // Preserves the original public Spawn API.
     public void Spawn(Vector3 position, Quaternion rotation)
     {
         string objectId = $"{currentBuildType}_{nextBuildId++}";
@@ -75,6 +78,14 @@ public class PlatformSpawner : MonoBehaviour
         Quaternion rotation,
         string objectId)
     {
+        if (spawnedObjectsById.TryGetValue(
+                objectId,
+                out GameObject existingObject) &&
+            existingObject != null)
+        {
+            return existingObject;
+        }
+
         GameObject prefab = buildType == BuildType.Platform
             ? platformPrefab
             : wallPrefab;
@@ -88,6 +99,16 @@ public class PlatformSpawner : MonoBehaviour
         GameObject spawnedObject = Instantiate(prefab, position, rotation);
         spawnedObject.name = objectId;
 
+        TimelineObject timelineObject =
+            spawnedObject.GetComponent<TimelineObject>();
+
+        if (timelineObject == null)
+        {
+            timelineObject = spawnedObject.AddComponent<TimelineObject>();
+        }
+
+        timelineObject.SetTimelineId(objectId);
+
         string layerName = buildType == BuildType.Platform
             ? groundLayerName
             : wallLayerName;
@@ -96,7 +117,41 @@ public class PlatformSpawner : MonoBehaviour
             spawnedObject,
             LayerMask.NameToLayer(layerName));
 
+        spawnedObjectsById[objectId] = spawnedObject;
         return spawnedObject;
+    }
+
+    public bool Despawn(string objectId)
+    {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager != null &&
+            !manager.RecordPlatformDespawned(objectId))
+        {
+            return false;
+        }
+
+        return DespawnRecorded(objectId);
+    }
+
+    public bool DespawnRecorded(string objectId)
+    {
+        if (!spawnedObjectsById.TryGetValue(
+                objectId,
+                out GameObject spawnedObject))
+        {
+            return false;
+        }
+
+        spawnedObjectsById.Remove(objectId);
+
+        if (spawnedObject != null)
+        {
+            spawnedObject.SetActive(false);
+            Destroy(spawnedObject);
+        }
+
+        return true;
     }
 
     public void SpawnPreview()
@@ -170,7 +225,6 @@ public class PlatformSpawner : MonoBehaviour
         }
         else
         {
-            // Keeps the older single-track event recorder usable.
             TimelineEventRecorder.instance?.RecordBuildEvent(
                 objectId,
                 placedType,
@@ -186,7 +240,7 @@ public class PlatformSpawner : MonoBehaviour
             Debug.LogWarning(
                 "Placement was not recorded, so the spawned object was removed.");
 
-            Destroy(spawnedObject);
+            DespawnRecorded(objectId);
         }
 
         DestroyPreview();

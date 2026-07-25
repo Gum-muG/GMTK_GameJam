@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 8804094355534363920}
   - component: {fileID: 7032514083916573139}
   - component: {fileID: 2308392732051077849}
+  - component: {fileID: 8417541681432714427}
+  - component: {fileID: 2992804717314110098}
   m_Layer: 3
   m_Name: Fire
   m_TagString: Untagged
@@ -142,6 +144,8 @@ MonoBehaviour:
   cameraTransform: {fileID: 4665717192488240138}
   playerCamera: {fileID: 2123935322467623187}
   dashing: {fileID: 8948256116952879571}
+  wallDetachDelay: 0.15
+  wallJumpCoyoteTime: 0.15
 --- !u!114 &8948256116952879571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,6 +219,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterBuildEventTrack
   events: []
+--- !u!114 &8417541681432714427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920279370166423282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab6c5f02b6be1d540af1058e29753d5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterWorldEventTrack
+  events: []
+  deathMarkerPrefab: {fileID: 5318257610099383140, guid: e3d54f579bfeb3349b041dc4e1e8902f, type: 3}
+--- !u!114 &2992804717314110098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920279370166423282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67105672cbd5ab74e8e6933ad9dd906b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimelineObject
+  timelineId: 0
 --- !u!1 &4453874182994850456
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,7 +406,7 @@ GameObject:
   - component: {fileID: 2123935322467623187}
   m_Layer: 3
   m_Name: FireCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
