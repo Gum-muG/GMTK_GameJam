@@ -17,6 +17,7 @@ public class CharacterSwapManager : MonoBehaviour
     [SerializeField] private MonoBehaviour[] iceControlScripts;
     [SerializeField] private GameObject iceCameraRig;
     [SerializeField] private Rigidbody iceBody;
+    [SerializeField] private GameObject iceParticles;
 
     [Header("Fire")]
     [SerializeField] private CharacterReplayTrack fireReplayTrack;
@@ -24,6 +25,7 @@ public class CharacterSwapManager : MonoBehaviour
     [SerializeField] private MonoBehaviour[] fireControlScripts;
     [SerializeField] private GameObject fireCameraRig;
     [SerializeField] private Rigidbody fireBody;
+    [SerializeField] private GameObject fireParticles;
 
     [Header("World events")]
     [SerializeField] private PlatformSpawner platformSpawner;
@@ -431,7 +433,8 @@ public class CharacterSwapManager : MonoBehaviour
             iceCameraRig,
             iceBody,
             iceControlled,
-            iceVisible);
+            iceVisible,
+            iceParticles);
 
         SetCharacterMode(
             fireReplayTrack,
@@ -439,7 +442,8 @@ public class CharacterSwapManager : MonoBehaviour
             fireCameraRig,
             fireBody,
             fireControlled,
-            fireVisible);
+            fireVisible,
+            fireParticles);
     }
 
     private static void SetCharacterMode(
@@ -448,7 +452,8 @@ public class CharacterSwapManager : MonoBehaviour
         GameObject cameraRig,
         Rigidbody body,
         bool controlled,
-        bool visible)
+        bool visible,
+        GameObject particles)
     {
         if (track != null &&
             track.gameObject.activeSelf != visible)
@@ -463,6 +468,11 @@ public class CharacterSwapManager : MonoBehaviour
         if (cameraRig != null)
         {
             cameraRig.SetActive(controlled);
+        }
+
+        if (particles != null)
+        {
+            particles.SetActive(!controlled);
         }
 
         if (body != null)
