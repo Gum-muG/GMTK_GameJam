@@ -100,8 +100,6 @@ public class WallRunning : MonoBehaviour
             wallJumpCoyoteTimer -= Time.deltaTime;
         }
 
-        // Wall jump while wall-running or shortly after leaving the wall.
-        // Ground jumps are still handled by PlayerMovement.
         if (Input.GetKeyDown(KeyCode.Space) &&
             !playerMovement.isGrounded &&
             (playerMovement.wallRunning ||
@@ -296,14 +294,6 @@ public class WallRunning : MonoBehaviour
         wallNum++;
         wallDetachTimer = 0f;
 
-        Debug.Log(
-            $"ENTER | " +
-            $"Object: {collision.gameObject.name} | " +
-            $"Collider: {collision.collider.name} | " +
-            $"ID: {collision.collider.GetEntityId()} | " +
-            $"wallNum: {wallNum} | " +
-            $"Time: {Time.time:F4}");
-
         UpdateWallNormal(collision);
     }
 
@@ -328,13 +318,6 @@ public class WallRunning : MonoBehaviour
 
         wallNum = Mathf.Max(0, wallNum - 1);
 
-        Debug.Log(
-            $"EXIT | " +
-            $"Object: {collision.gameObject.name} | " +
-            $"Collider: {collision.collider.name} | " +
-            $"ID: {collision.collider.GetEntityId()} | " +
-            $"wallNum: {wallNum} | " +
-            $"Time: {Time.time:F4}");
     }
 
     private void UpdateWallNormal(Collision collision)
