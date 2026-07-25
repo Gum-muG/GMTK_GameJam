@@ -4,9 +4,18 @@ using UnityEngine;
 public enum WorldReplayEventType
 {
     ProjectileFired,
+    ProjectileSample,
     ProjectileDespawned,
+    EnemySnapshot,
+    EnemyDied,
     CharacterDied,
     PlatformDespawned
+}
+
+public enum ProjectileFaction
+{
+    Player,
+    Enemy
 }
 
 [System.Serializable]
@@ -21,10 +30,12 @@ public struct WorldReplayEventData
     public Vector3 position;
     public Quaternion rotation;
     public Vector3 direction;
+    public Vector3 velocity;
 
     public float speed;
     public float lifetime;
 
+    public ProjectileFaction projectileFaction;
     public CharacterSwapManager.PlayableCharacter character;
 }
 
@@ -93,6 +104,7 @@ public class CharacterWorldEventTrack : MonoBehaviour
         float timelineTime,
         string projectileId,
         string shooterId,
+        ProjectileFaction faction,
         Vector3 position,
         Quaternion rotation,
         Vector3 direction,
@@ -110,6 +122,7 @@ public class CharacterWorldEventTrack : MonoBehaviour
             eventType = WorldReplayEventType.ProjectileFired,
             objectId = projectileId,
             sourceId = shooterId,
+            projectileFaction = faction,
             position = position,
             rotation = rotation,
             direction = direction.normalized,
@@ -120,9 +133,36 @@ public class CharacterWorldEventTrack : MonoBehaviour
         return true;
     }
 
+    public bool RecordProjectileSample(
+        float timelineTime,
+        string projectileId,
+        Vector3 position,
+        Quaternion rotation,
+        Vector3 velocity)
+    {
+        if (!isRecording || string.IsNullOrWhiteSpace(projectileId))
+        {
+            return false;
+        }
+
+        events.Add(new WorldReplayEventData
+        {
+            time = timelineTime,
+            eventType = WorldReplayEventType.ProjectileSample,
+            objectId = projectileId,
+            position = position,
+            rotation = rotation,
+            velocity = velocity
+        });
+
+        return true;
+    }
+
     public bool RecordProjectileDespawned(
         float timelineTime,
-        string projectileId)
+        string projectileId,
+        Vector3 position,
+        Quaternion rotation)
     {
         if (!isRecording || string.IsNullOrWhiteSpace(projectileId))
         {
@@ -133,7 +173,60 @@ public class CharacterWorldEventTrack : MonoBehaviour
         {
             time = timelineTime,
             eventType = WorldReplayEventType.ProjectileDespawned,
-            objectId = projectileId
+            objectId = projectileId,
+            position = position,
+            rotation = rotation
+        });
+
+        return true;
+    }
+
+    public void RecordEnemySnapshots(float timelineTime)
+    {
+        if (!isRecording)
+        {
+            return;
+        }
+
+        foreach (EnemyReplayObject enemy in EnemyReplayObject.AllEnemies)
+        {
+            if (enemy == null || enemy.IsDead)
+            {
+                continue;
+            }
+
+            events.Add(new WorldReplayEventData
+            {
+                time = timelineTime,
+                eventType = WorldReplayEventType.EnemySnapshot,
+                objectId = enemy.EnemyId,
+                position = enemy.transform.position,
+                rotation = enemy.transform.rotation,
+                velocity = enemy.GetVelocity()
+            });
+        }
+    }
+
+    public bool RecordEnemyDied(
+        float timelineTime,
+        string enemyId,
+        string sourceProjectileId,
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (!isRecording || string.IsNullOrWhiteSpace(enemyId))
+        {
+            return false;
+        }
+
+        events.Add(new WorldReplayEventData
+        {
+            time = timelineTime,
+            eventType = WorldReplayEventType.EnemyDied,
+            objectId = enemyId,
+            sourceId = sourceProjectileId,
+            position = position,
+            rotation = rotation
         });
 
         return true;
@@ -142,6 +235,7 @@ public class CharacterWorldEventTrack : MonoBehaviour
     public bool RecordCharacterDeath(
         float timelineTime,
         string deathEventId,
+        string sourceProjectileId,
         CharacterSwapManager.PlayableCharacter character,
         Vector3 position,
         Quaternion rotation)
@@ -151,17 +245,24 @@ public class CharacterWorldEventTrack : MonoBehaviour
             return false;
         }
 
-        WorldReplayEventData deathEvent = new WorldReplayEventData
-        {
-            time = timelineTime,
-            eventType = WorldReplayEventType.CharacterDied,
-            objectId = deathEventId,
-            character = character,
-            position = position,
-            rotation = rotation
-        };
+        WorldReplayEventData deathEvent =
+            new WorldReplayEventData
+            {
+                time = timelineTime,
+                eventType =
+                    WorldReplayEventType.CharacterDied,
+
+                objectId = deathEventId,
+                sourceId = sourceProjectileId,
+
+                character = character,
+                position = position,
+                rotation = rotation
+            };
 
         events.Add(deathEvent);
+
+        // Marker appears immediately, but the player remains alive.
         SpawnDeathMarker(deathEvent);
 
         return true;
@@ -194,16 +295,32 @@ public class CharacterWorldEventTrack : MonoBehaviour
         }
 
         while (nextEventIndex < events.Count &&
-               events[nextEventIndex].time <= timelineTime)
+            events[nextEventIndex].time <= timelineTime)
         {
-            ReplayEvent(events[nextEventIndex], timelineTime, false);
+            WorldReplayEventData replayEvent =
+                events[nextEventIndex];
+
+            ReplayEvent(
+                replayEvent,
+                true);
+
+            // This only happens during actual playback,
+            // not while rebuilding during a swap or seek.
+            if (replayEvent.eventType ==
+                WorldReplayEventType.CharacterDied)
+            {
+                CharacterDeathManager.instance?.
+                    ResolveRecordedDeath(replayEvent);
+            }
+
             nextEventIndex++;
         }
     }
 
     public void RebuildWorldUpTo(
         PlatformSpawner spawner,
-        float timelineTime)
+        float timelineTime,
+        bool applyEnemySnapshots)
     {
         platformSpawner = spawner;
 
@@ -213,8 +330,88 @@ public class CharacterWorldEventTrack : MonoBehaviour
         while (nextEventIndex < events.Count &&
                events[nextEventIndex].time <= timelineTime)
         {
-            ReplayEvent(events[nextEventIndex], timelineTime, true);
+            ReplayEvent(events[nextEventIndex], applyEnemySnapshots);
             nextEventIndex++;
+        }
+    }
+
+    public void ApplyEnemyDeathsUpTo(float timelineTime)
+    {
+        foreach (WorldReplayEventData replayEvent in events)
+        {
+            if (replayEvent.time > timelineTime)
+            {
+                break;
+            }
+
+            if (replayEvent.eventType != WorldReplayEventType.EnemyDied)
+            {
+                continue;
+            }
+
+            if (EnemyReplayObject.TryGetEnemy(
+                    replayEvent.objectId,
+                    out EnemyReplayObject enemy))
+            {
+                enemy.SetDead(true);
+            }
+        }
+    }
+
+    public bool HasEnemyDeathAtOrBefore(
+        string enemyId,
+        float timelineTime)
+    {
+        foreach (WorldReplayEventData replayEvent in events)
+        {
+            if (replayEvent.time > timelineTime)
+            {
+                break;
+            }
+
+            if (replayEvent.eventType == WorldReplayEventType.EnemyDied &&
+                replayEvent.objectId == enemyId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool TryGetProjectileFireEvent(
+        string projectileId,
+        out WorldReplayEventData fireEvent)
+    {
+        foreach (WorldReplayEventData replayEvent in events)
+        {
+            if (replayEvent.eventType == WorldReplayEventType.ProjectileFired &&
+                replayEvent.objectId == projectileId)
+            {
+                fireEvent = replayEvent;
+                return true;
+            }
+        }
+
+        fireEvent = default;
+        return false;
+    }
+
+    public void RefreshDeathMarkers(float timelineTime)
+    {
+        ClearDeathMarkers();
+
+        foreach (WorldReplayEventData replayEvent in events)
+        {
+            if (replayEvent.time > timelineTime)
+            {
+                break;
+            }
+
+            if (replayEvent.eventType == WorldReplayEventType.CharacterDied)
+            {
+                SpawnDeathMarker(replayEvent);
+            }
         }
     }
 
@@ -225,28 +422,40 @@ public class CharacterWorldEventTrack : MonoBehaviour
             DisableAndDestroy(projectile);
         }
 
-        foreach (GameObject marker in spawnedDeathMarkers.Values)
-        {
-            DisableAndDestroy(marker);
-        }
-
         spawnedProjectiles.Clear();
-        spawnedDeathMarkers.Clear();
+        ClearDeathMarkers();
     }
 
     private void ReplayEvent(
         WorldReplayEventData replayEvent,
-        float requestedTime,
-        bool rebuilding)
+        bool applyEnemySnapshots)
     {
         switch (replayEvent.eventType)
         {
             case WorldReplayEventType.ProjectileFired:
-                ReplayProjectileFired(replayEvent, requestedTime, rebuilding);
+                ReplayProjectileFired(replayEvent);
+                break;
+
+            case WorldReplayEventType.ProjectileSample:
+                ReplayProjectileSample(replayEvent);
                 break;
 
             case WorldReplayEventType.ProjectileDespawned:
                 DespawnReplayProjectile(replayEvent.objectId);
+                break;
+
+            case WorldReplayEventType.EnemySnapshot:
+                if (applyEnemySnapshots)
+                {
+                    ReplayEnemySnapshot(replayEvent);
+                }
+                break;
+
+            case WorldReplayEventType.EnemyDied:
+                if (applyEnemySnapshots)
+                {
+                    ReplayEnemyDied(replayEvent);
+                }
                 break;
 
             case WorldReplayEventType.CharacterDied:
@@ -259,11 +468,16 @@ public class CharacterWorldEventTrack : MonoBehaviour
         }
     }
 
-    private void ReplayProjectileFired(
-        WorldReplayEventData replayEvent,
-        float requestedTime,
-        bool rebuilding)
+    private void ReplayProjectileFired(WorldReplayEventData replayEvent)
     {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager != null &&
+            manager.IsEnemyDeadAt(replayEvent.sourceId, replayEvent.time))
+        {
+            return;
+        }
+
         if (spawnedProjectiles.ContainsKey(replayEvent.objectId))
         {
             return;
@@ -278,21 +492,72 @@ public class CharacterWorldEventTrack : MonoBehaviour
             return;
         }
 
-        float elapsedTime = rebuilding
-            ? Mathf.Max(0f, requestedTime - replayEvent.time)
-            : 0f;
-
         GameObject projectile = shooter.SpawnReplayProjectile(
             replayEvent.objectId,
+            replayEvent.projectileFaction,
             replayEvent.position,
-            replayEvent.direction,
-            replayEvent.speed,
-            replayEvent.lifetime,
-            elapsedTime);
+            replayEvent.direction);
 
         if (projectile != null)
         {
             spawnedProjectiles[replayEvent.objectId] = projectile;
+        }
+    }
+
+    private void ReplayProjectileSample(WorldReplayEventData replayEvent)
+    {
+        if (!spawnedProjectiles.TryGetValue(
+                replayEvent.objectId,
+                out GameObject projectile) ||
+            projectile == null)
+        {
+            return;
+        }
+
+        Projectile projectileScript = projectile.GetComponent<Projectile>();
+
+        if (projectileScript != null)
+        {
+            projectileScript.ApplyReplaySample(
+                replayEvent.position,
+                replayEvent.rotation,
+                replayEvent.velocity);
+        }
+        else
+        {
+            projectile.transform.SetPositionAndRotation(
+                replayEvent.position,
+                replayEvent.rotation);
+        }
+    }
+
+    private void ReplayEnemySnapshot(WorldReplayEventData replayEvent)
+    {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager != null &&
+            manager.IsEnemyDeadAt(replayEvent.objectId, replayEvent.time))
+        {
+            return;
+        }
+
+        if (EnemyReplayObject.TryGetEnemy(
+                replayEvent.objectId,
+                out EnemyReplayObject enemy))
+        {
+            enemy.ApplyRecordedPose(
+                replayEvent.position,
+                replayEvent.rotation);
+        }
+    }
+
+    private static void ReplayEnemyDied(WorldReplayEventData replayEvent)
+    {
+        if (EnemyReplayObject.TryGetEnemy(
+                replayEvent.objectId,
+                out EnemyReplayObject enemy))
+        {
+            enemy.SetDead(true);
         }
     }
 
@@ -311,6 +576,17 @@ public class CharacterWorldEventTrack : MonoBehaviour
 
     private void SpawnDeathMarker(WorldReplayEventData replayEvent)
     {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager != null &&
+            manager.IsDeathCausePrevented(
+                replayEvent.sourceId,
+                replayEvent.time))
+        {
+            RemoveDeathMarker(replayEvent.objectId);
+            return;
+        }
+
         if (deathMarkerPrefab == null ||
             spawnedDeathMarkers.ContainsKey(replayEvent.objectId))
         {
@@ -328,12 +604,34 @@ public class CharacterWorldEventTrack : MonoBehaviour
         spawnedDeathMarkers[replayEvent.objectId] = marker;
     }
 
+    private void RemoveDeathMarker(string deathEventId)
+    {
+        if (!spawnedDeathMarkers.TryGetValue(
+                deathEventId,
+                out GameObject marker))
+        {
+            return;
+        }
+
+        DisableAndDestroy(marker);
+        spawnedDeathMarkers.Remove(deathEventId);
+    }
+
+    private void ClearDeathMarkers()
+    {
+        foreach (GameObject marker in spawnedDeathMarkers.Values)
+        {
+            DisableAndDestroy(marker);
+        }
+
+        spawnedDeathMarkers.Clear();
+    }
+
     private int FindFirstEventAfter(float timelineTime)
     {
         int index = 0;
 
-        while (index < events.Count &&
-               events[index].time <= timelineTime)
+        while (index < events.Count && events[index].time <= timelineTime)
         {
             index++;
         }

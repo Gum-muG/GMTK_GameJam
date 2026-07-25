@@ -60,13 +60,11 @@ public class WorldPlacement : MonoBehaviour
 
     private bool CanBuildNow()
     {
-        // New simultaneous character timeline.
         if (CharacterSwapManager.instance != null)
         {
             return CharacterSwapManager.instance.IsRecording;
         }
 
-        // Older single-track fallback.
         return ReplayManager.instance != null &&
                ReplayManager.instance.IsRecording;
     }

@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class ProjectileShooter : MonoBehaviour
 {
-    private static readonly Dictionary<string, ProjectileShooter>
-        shootersById = new Dictionary<string, ProjectileShooter>();
+    private static readonly Dictionary<string, ProjectileShooter> shootersById =
+        new Dictionary<string, ProjectileShooter>();
 
+    [Header("Ownership")]
+    [SerializeField] private ProjectileFaction projectileFaction =
+        ProjectileFaction.Enemy;
+
+    [Header("Projectile")]
     public GameObject projectilePrefab;
     public Transform firePoint;
     public Transform aimTransform;
@@ -85,32 +90,20 @@ public class ProjectileShooter : MonoBehaviour
 
     public GameObject SpawnReplayProjectile(
         string projectileId,
+        ProjectileFaction faction,
         Vector3 recordedPosition,
-        Vector3 recordedDirection,
-        float recordedSpeed,
-        float recordedLifetime,
-        float elapsedTime)
+        Vector3 recordedDirection)
     {
         Vector3 direction = recordedDirection.sqrMagnitude > 0.001f
             ? recordedDirection.normalized
             : transform.forward;
 
-        float remainingLifetime = recordedLifetime - elapsedTime;
-
-        if (remainingLifetime <= 0f)
-        {
-            return null;
-        }
-
-        Vector3 reconstructedPosition =
-            recordedPosition + direction * recordedSpeed * elapsedTime;
-
         return SpawnProjectileObject(
             projectileId,
-            reconstructedPosition,
+            faction,
+            recordedPosition,
             direction,
-            recordedSpeed,
-            remainingLifetime,
+            0f,
             true);
     }
 
@@ -131,14 +124,13 @@ public class ProjectileShooter : MonoBehaviour
         }
 
         string projectileId = $"Projectile_{Guid.NewGuid():N}";
-        float projectileLifetime = GetProjectileLifetime();
 
         GameObject projectile = SpawnProjectileObject(
             projectileId,
+            projectileFaction,
             firePoint.position,
             direction,
             projectileSpeed,
-            projectileLifetime,
             false);
 
         CharacterSwapManager manager = CharacterSwapManager.instance;
@@ -148,20 +140,21 @@ public class ProjectileShooter : MonoBehaviour
             manager.RecordProjectileFired(
                 projectileId,
                 ShooterId,
+                projectileFaction,
                 firePoint.position,
                 Quaternion.LookRotation(direction),
                 direction,
                 projectileSpeed,
-                projectileLifetime);
+                GetProjectileLifetime());
         }
     }
 
     private GameObject SpawnProjectileObject(
         string projectileId,
+        ProjectileFaction faction,
         Vector3 position,
         Vector3 direction,
         float speed,
-        float projectileLifetime,
         bool replayVisualOnly)
     {
         if (projectilePrefab == null)
@@ -191,15 +184,36 @@ public class ProjectileShooter : MonoBehaviour
         {
             projectileScript.Initialize(
                 projectileId,
+                ShooterId,
+                faction,
                 replayVisualOnly,
-                projectileLifetime);
+                GetProjectileLifetime());
         }
 
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 
         if (projectileRb != null)
         {
-            projectileRb.linearVelocity = direction.normalized * speed;
+            if (replayVisualOnly)
+            {
+                projectileRb.linearVelocity = Vector3.zero;
+                projectileRb.angularVelocity = Vector3.zero;
+                projectileRb.useGravity = false;
+                projectileRb.isKinematic = true;
+            }
+            else
+            {
+                projectileRb.linearVelocity = direction.normalized * speed;
+            }
+        }
+
+        if (replayVisualOnly)
+        {
+            foreach (Collider projectileCollider in
+                     projectile.GetComponentsInChildren<Collider>())
+            {
+                projectileCollider.enabled = false;
+            }
         }
 
         return projectile;

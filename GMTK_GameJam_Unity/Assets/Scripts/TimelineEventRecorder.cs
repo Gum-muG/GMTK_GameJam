@@ -103,7 +103,6 @@ public class TimelineEventRecorder : MonoBehaviour
                     return;
                 }
 
-                // The ID guard prevents a recorded event from spawning twice.
                 if (spawnedObjects.ContainsKey(timelineEvent.objectId))
                 {
                     return;

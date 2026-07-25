@@ -74,6 +74,13 @@ public class CharacterSwapManager : MonoBehaviour
     public float IceTime => iceTime;
     public float FireTime => fireTime;
 
+    public float OtherCharacterTime =>
+        GetCharacterTime(
+            GetOtherCharacter(activeCharacter));
+
+    public bool IsActiveCharacterAhead =>
+        CurrentTime > OtherCharacterTime + 0.001f;
+
     public bool IsRecording =>
         timelineRunning &&
         recordingTrack != null &&
@@ -166,15 +173,17 @@ public class CharacterSwapManager : MonoBehaviour
             return;
         }
 
-        // Record the active character at its own cursor.
+        // Replay the counterpart world first, then record the resulting
+        // shared world into the active character's take.
+        playbackTrack?.PlaybackStep(nextTime);
+        playbackBuildTrack?.ProcessEventsUpTo(nextTime);
+        playbackWorldTrack?.ProcessEventsUpTo(nextTime);
+
         recordingTrack.RecordStep(
             nextTime,
             elapsedTime);
 
-        // The counterpart is sampled at that same absolute timeline time.
-        playbackTrack?.PlaybackStep(nextTime);
-        playbackBuildTrack?.ProcessEventsUpTo(nextTime);
-        playbackWorldTrack?.ProcessEventsUpTo(nextTime);
+        recordingWorldTrack?.RecordEnemySnapshots(nextTime);
     }
 
     public void StartTimeline(
@@ -191,6 +200,8 @@ public class CharacterSwapManager : MonoBehaviour
         timelineRunning = true;
 
         ClearAllSpawnedBuildObjects();
+        EnemyReplayObject.ResetAllToStartingState();
+        EnemyReplayObject.SetAllPlaybackDriven(false);
 
         CharacterReplayTrack activeTrack =
             GetReplayTrack(activeCharacter);
@@ -233,13 +244,13 @@ public class CharacterSwapManager : MonoBehaviour
         playbackWorldTrack = null;
 
         ApplyCharacterModes();
+        ApplyEnemyMode();
     }
 
     public void SwapCharacters()
     {
         if (!timelineRunning)
         {
-            StartTimeline(startingCharacter);
             return;
         }
 
@@ -340,6 +351,7 @@ public class CharacterSwapManager : MonoBehaviour
         RebuildWorldAt(resumeTime);
 
         ApplyCharacterModes();
+        ApplyEnemyMode();
     }
 
     public void RestartCurrentTake()
@@ -408,6 +420,7 @@ public class CharacterSwapManager : MonoBehaviour
 
         RebuildWorldAt(0f);
         ApplyCharacterModes();
+        ApplyEnemyMode();
     }
 
     public void StopTimeline()
@@ -430,6 +443,8 @@ public class CharacterSwapManager : MonoBehaviour
         SetControlScriptsEnabled(
             fireControlScripts,
             false);
+
+        EnemyReplayObject.SetAllPlaybackDriven(true);
     }
 
     public bool RecordBuildEvent(
@@ -470,6 +485,7 @@ public class CharacterSwapManager : MonoBehaviour
     public bool RecordProjectileFired(
         string projectileId,
         string shooterId,
+        ProjectileFaction faction,
         Vector3 position,
         Quaternion rotation,
         Vector3 direction,
@@ -485,6 +501,7 @@ public class CharacterSwapManager : MonoBehaviour
             CurrentTime,
             projectileId,
             shooterId,
+            faction,
             position,
             rotation,
             direction,
@@ -492,21 +509,27 @@ public class CharacterSwapManager : MonoBehaviour
             lifetime);
     }
 
-    public bool RecordProjectileDespawned(string projectileId)
+    public bool RecordProjectileSample(
+        string projectileId,
+        Vector3 position,
+        Quaternion rotation,
+        Vector3 velocity)
     {
         if (!IsRecording || recordingWorldTrack == null)
         {
             return false;
         }
 
-        return recordingWorldTrack.RecordProjectileDespawned(
+        return recordingWorldTrack.RecordProjectileSample(
             CurrentTime,
-            projectileId);
+            projectileId,
+            position,
+            rotation,
+            velocity);
     }
 
-    public bool RecordCharacterDeath(
-        string deathEventId,
-        PlayableCharacter character,
+    public bool RecordProjectileDespawned(
+        string projectileId,
         Vector3 position,
         Quaternion rotation)
     {
@@ -515,9 +538,56 @@ public class CharacterSwapManager : MonoBehaviour
             return false;
         }
 
+        return recordingWorldTrack.RecordProjectileDespawned(
+            CurrentTime,
+            projectileId,
+            position,
+            rotation);
+    }
+
+    public bool RecordEnemyDied(
+        string enemyId,
+        string sourceProjectileId,
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (!IsRecording || recordingWorldTrack == null)
+        {
+            return false;
+        }
+
+        bool recorded = recordingWorldTrack.RecordEnemyDied(
+            CurrentTime,
+            enemyId,
+            sourceProjectileId,
+            position,
+            rotation);
+
+        if (recorded)
+        {
+            RefreshCausalState(CurrentTime);
+        }
+
+        return recorded;
+    }
+
+    public bool RecordCharacterDeath(
+        string deathEventId,
+        string sourceProjectileId,
+        PlayableCharacter character,
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (!IsRecording ||
+            recordingWorldTrack == null)
+        {
+            return false;
+        }
+
         return recordingWorldTrack.RecordCharacterDeath(
             CurrentTime,
             deathEventId,
+            sourceProjectileId,
             character,
             position,
             rotation);
@@ -535,6 +605,62 @@ public class CharacterSwapManager : MonoBehaviour
             platformId);
     }
 
+    public bool IsEnemyDeadAt(
+        string enemyId,
+        float timelineTime)
+    {
+        if (string.IsNullOrWhiteSpace(enemyId))
+        {
+            return false;
+        }
+
+        return iceWorldEventTrack.HasEnemyDeathAtOrBefore(
+                   enemyId,
+                   timelineTime) ||
+               fireWorldEventTrack.HasEnemyDeathAtOrBefore(
+                   enemyId,
+                   timelineTime);
+    }
+
+    public bool IsDeathCausePrevented(
+        string sourceProjectileId,
+        float deathTime)
+    {
+        if (string.IsNullOrWhiteSpace(sourceProjectileId) ||
+            sourceProjectileId == "Environment")
+        {
+            return false;
+        }
+
+        if (!TryGetProjectileFireEvent(
+                sourceProjectileId,
+                out WorldReplayEventData fireEvent))
+        {
+            return false;
+        }
+
+        return fireEvent.projectileFaction == ProjectileFaction.Enemy &&
+               IsEnemyDeadAt(
+                   fireEvent.sourceId,
+                   fireEvent.time);
+    }
+
+    private bool TryGetProjectileFireEvent(
+        string projectileId,
+        out WorldReplayEventData fireEvent)
+    {
+        if (iceWorldEventTrack.TryGetProjectileFireEvent(
+                projectileId,
+                out fireEvent))
+        {
+            return true;
+        }
+
+        return fireWorldEventTrack.TryGetProjectileFireEvent(
+            projectileId,
+            out fireEvent);
+    }
+
     private void RebuildWorldAt(float timelineTime)
     {
         iceBuildEventTrack.RebuildWorldUpTo(
@@ -545,13 +671,37 @@ public class CharacterSwapManager : MonoBehaviour
             platformSpawner,
             timelineTime);
 
+        EnemyReplayObject.ResetAllToStartingState();
+
+        CharacterWorldEventTrack enemyDriverTrack =
+            playbackWorldTrack ?? recordingWorldTrack;
+
         iceWorldEventTrack.RebuildWorldUpTo(
             platformSpawner,
-            timelineTime);
+            timelineTime,
+            iceWorldEventTrack == enemyDriverTrack);
 
         fireWorldEventTrack.RebuildWorldUpTo(
             platformSpawner,
-            timelineTime);
+            timelineTime,
+            fireWorldEventTrack == enemyDriverTrack);
+
+        iceWorldEventTrack.ApplyEnemyDeathsUpTo(timelineTime);
+        fireWorldEventTrack.ApplyEnemyDeathsUpTo(timelineTime);
+
+        RefreshCausalState(timelineTime);
+    }
+
+    private void RefreshCausalState(float timelineTime)
+    {
+        iceWorldEventTrack.RefreshDeathMarkers(timelineTime);
+        fireWorldEventTrack.RefreshDeathMarkers(timelineTime);
+    }
+
+    private void ApplyEnemyMode()
+    {
+        EnemyReplayObject.SetAllPlaybackDriven(
+            playbackWorldTrack != null);
     }
 
     private void ApplyCharacterModes()
@@ -622,7 +772,7 @@ public class CharacterSwapManager : MonoBehaviour
 
         if (particles != null)
         {
-            particles.SetActive(!controlled);
+            particles.SetActive(visible && !controlled);
         }
 
         if (body != null)

@@ -10,18 +10,14 @@ public class enemyAI : MonoBehaviour
 
     private ProjectileShooter projectileShooterScript;
 
-    //patrolling
     public Vector3 walkPoint;
     public float walkPointRange;
 
     private bool walkPointSet;
 
-    //attacking
     public float timeBetweenAttacks = 1f;
-
     private bool alreadyAttacked;
 
-    //ranges
     public float sightRange = 15f;
     public float attackRange = 10f;
 
@@ -30,8 +26,6 @@ public class enemyAI : MonoBehaviour
 
     private void Awake()
     {
-        
-
         agent = GetComponent<NavMeshAgent>();
         projectileShooterScript = GetComponentInParent<ProjectileShooter>();
 
@@ -48,22 +42,23 @@ public class enemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (player == null || agent == null)
+        ResolveActivePlayer();
+
+        if (player == null || agent == null || !agent.enabled)
         {
             return;
         }
 
-        playerInSightRange = Physics.CheckSphere(
-            transform.position,
-            sightRange,
-            Player
-        );
+        float distanceToPlayer =
+            Vector3.Distance(
+                transform.position,
+                player.position);
 
-        playerInAttackRange = Physics.CheckSphere(
-            transform.position,
-            attackRange,
-            Player
-        );
+        playerInSightRange =
+            distanceToPlayer <= sightRange;
+
+        playerInAttackRange =
+            distanceToPlayer <= attackRange;
 
         if (playerInAttackRange && playerInSightRange)
         {
@@ -76,6 +71,16 @@ public class enemyAI : MonoBehaviour
         else
         {
             Patrolling();
+        }
+    }
+
+    private void ResolveActivePlayer()
+    {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager != null && manager.ActiveCharacterTransform != null)
+        {
+            player = manager.ActiveCharacterTransform;
         }
     }
 
@@ -126,11 +131,9 @@ public class enemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        // Stop moving while attacking.
         agent.isStopped = true;
         agent.ResetPath();
 
-        // Face the player without tilting vertically.
         Vector3 directionToPlayer = player.position - transform.position;
         directionToPlayer.y = 0f;
 

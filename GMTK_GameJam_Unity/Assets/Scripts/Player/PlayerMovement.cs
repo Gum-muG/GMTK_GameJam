@@ -42,8 +42,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     private float coyoteTimeCounter;
     public float fallMultiplier = 2.5f;
 
-    // Kept only so existing Inspector data is not lost.
-    // The modular replay system does not use this field.
     public Transform clone;
 
     public enum MovementState
@@ -69,8 +67,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
 
         rb.freezeRotation = true;
 
-        // Do not register with the old ReplayManager.
-        // CharacterReplayTrack discovers this IReplayObject automatically.
     }
 
     private void Update()
@@ -161,7 +157,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
 
     private void FixedUpdate()
     {
-        // Original movement logic left unchanged.
         moveDir = forward.forward * yIn + forward.right * xIn;
 
         if (wallRunning)
@@ -264,7 +259,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
             id = GetId(),
             position = transform.position,
 
-            // Record the character body, not the camera/orientation transform.
             rotation = transform.rotation,
 
             state = movementState
@@ -281,8 +275,6 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
             return;
         }
 
-        // Replay this character directly.
-        // Do not move "clone" and do not rotate "forward".
         transform.SetPositionAndRotation(
             playerSnapshot.position,
             playerSnapshot.rotation);

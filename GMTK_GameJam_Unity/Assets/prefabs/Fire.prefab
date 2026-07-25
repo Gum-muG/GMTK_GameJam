@@ -5043,6 +5043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22768d1bff34e5240a1b4d5da3350eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileShooter
+  projectileFaction: 0
   projectilePrefab: {fileID: 1963319867357659209, guid: 2bb9d052374dfe846a8090d5151434cf, type: 3}
   firePoint: {fileID: 1737840070222051519}
   aimTransform: {fileID: 4665717192488240138}

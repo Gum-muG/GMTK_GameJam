@@ -6,9 +6,19 @@ public class Projectile : MonoBehaviour
     public float lifetime = 5f;
 
     private string timelineId;
+    private string shooterId;
+    private ProjectileFaction faction;
+
     private bool replayVisualOnly;
     private bool initialized;
     private bool ending;
+
+    private Rigidbody projectileBody;
+
+    private void Awake()
+    {
+        projectileBody = GetComponent<Rigidbody>();
+    }
 
     private void Start()
     {
@@ -21,36 +31,82 @@ public class Projectile : MonoBehaviour
                 : gameObject.name;
         }
 
-        Invoke(nameof(Expire), lifetime);
+        if (!replayVisualOnly)
+        {
+            Invoke(nameof(Expire), lifetime);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (replayVisualOnly ||
+            ending ||
+            CharacterSwapManager.instance == null)
+        {
+            return;
+        }
+
+        Vector3 velocity = projectileBody != null
+            ? projectileBody.linearVelocity
+            : Vector3.zero;
+
+        CharacterSwapManager.instance.RecordProjectileSample(
+            timelineId,
+            transform.position,
+            transform.rotation,
+            velocity);
     }
 
     public void Initialize(
         string projectileId,
+        string sourceShooterId,
+        ProjectileFaction projectileFaction,
         bool isReplayVisualOnly,
-        float remainingLifetime)
+        float projectileLifetime)
     {
         timelineId = projectileId;
+        shooterId = sourceShooterId;
+        faction = projectileFaction;
         replayVisualOnly = isReplayVisualOnly;
-        lifetime = Mathf.Max(0.01f, remainingLifetime);
+        lifetime = Mathf.Max(0.01f, projectileLifetime);
         initialized = true;
+    }
+
+    public void ApplyReplaySample(
+        Vector3 position,
+        Quaternion rotation,
+        Vector3 recordedVelocity)
+    {
+        if (!replayVisualOnly)
+        {
+            return;
+        }
+
+        transform.SetPositionAndRotation(position, rotation);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (ending)
+        if (ending || replayVisualOnly)
         {
             return;
         }
 
         ending = true;
+        RecordFinalStateAndDespawn();
 
-        if (!replayVisualOnly)
+        if (faction == ProjectileFaction.Enemy)
         {
-            CharacterSwapManager.instance?
-                .RecordProjectileDespawned(timelineId);
+            CharacterDeathManager.instance?.TryKillFromProjectile(
+                collision.gameObject,
+                timelineId);
+        }
+        else
+        {
+            EnemyReplayObject enemy =
+                collision.gameObject.GetComponentInParent<EnemyReplayObject>();
 
-            CharacterDeathManager.instance?
-                .TryKillFromProjectile(collision.gameObject, timelineId);
+            enemy?.TryKill(timelineId);
         }
 
         Debug.Log("Projectile hit: " + collision.gameObject.name);
@@ -65,13 +121,32 @@ public class Projectile : MonoBehaviour
         }
 
         ending = true;
+        RecordFinalStateAndDespawn();
+        Destroy(gameObject);
+    }
 
-        if (!replayVisualOnly)
+    private void RecordFinalStateAndDespawn()
+    {
+        CharacterSwapManager manager = CharacterSwapManager.instance;
+
+        if (manager == null)
         {
-            CharacterSwapManager.instance?
-                .RecordProjectileDespawned(timelineId);
+            return;
         }
 
-        Destroy(gameObject);
+        Vector3 velocity = projectileBody != null
+            ? projectileBody.linearVelocity
+            : Vector3.zero;
+
+        manager.RecordProjectileSample(
+            timelineId,
+            transform.position,
+            transform.rotation,
+            velocity);
+
+        manager.RecordProjectileDespawned(
+            timelineId,
+            transform.position,
+            transform.rotation);
     }
 }

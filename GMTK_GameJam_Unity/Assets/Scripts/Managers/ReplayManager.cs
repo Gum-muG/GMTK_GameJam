@@ -22,7 +22,6 @@ public class ReplayManager : MonoBehaviour
     public State currentState = State.Idle;
     public float CurrentTime { get; private set; }
 
-    // Small compatibility fix only.
     public bool IsRecording => currentState == State.Record;
     public bool IsPlayingBack => currentState == State.Playback;
 

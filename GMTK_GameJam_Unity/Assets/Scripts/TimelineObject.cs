@@ -6,14 +6,18 @@ public class TimelineObject : MonoBehaviour
 {
     [SerializeField] private string timelineId;
 
-    public string TimelineId => timelineId;
+    public string TimelineId
+    {
+        get
+        {
+            EnsureId();
+            return timelineId;
+        }
+    }
 
     private void Awake()
     {
-        if (string.IsNullOrWhiteSpace(timelineId))
-        {
-            timelineId = Guid.NewGuid().ToString("N");
-        }
+        EnsureId();
     }
 
     public void SetTimelineId(string newId)
@@ -28,5 +32,13 @@ public class TimelineObject : MonoBehaviour
     private void GenerateNewTimelineId()
     {
         timelineId = Guid.NewGuid().ToString("N");
+    }
+
+    private void EnsureId()
+    {
+        if (string.IsNullOrWhiteSpace(timelineId))
+        {
+            timelineId = Guid.NewGuid().ToString("N");
+        }
     }
 }
