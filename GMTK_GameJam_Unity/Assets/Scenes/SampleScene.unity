@@ -255,7 +255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &126024908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3126,6 +3126,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6437419960538073721}
     - target: {fileID: 3595646492658819120, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
+      propertyPath: iceControlScripts.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3595646492658819120, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
+      propertyPath: fireControlScripts.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3595646492658819120, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
       propertyPath: 'iceControlScripts.Array.data[0]'
       value: 
       objectReference: {fileID: 934524069}
@@ -3142,6 +3150,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 934524073}
     - target: {fileID: 3595646492658819120, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
+      propertyPath: 'iceControlScripts.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2137538470}
+    - target: {fileID: 3595646492658819120, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
       propertyPath: 'fireControlScripts.Array.data[0]'
       value: 
       objectReference: {fileID: 542853588}
@@ -3157,6 +3169,10 @@ PrefabInstance:
       propertyPath: 'fireControlScripts.Array.data[3]'
       value: 
       objectReference: {fileID: 542853578}
+    - target: {fileID: 3595646492658819120, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
+      propertyPath: 'fireControlScripts.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1053154384}
     - target: {fileID: 3820140355103255492, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
       propertyPath: wallPrefab
       value: 

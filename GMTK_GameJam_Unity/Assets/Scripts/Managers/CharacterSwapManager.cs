@@ -336,6 +336,7 @@ public class CharacterSwapManager : MonoBehaviour
         CharacterReplayTrack activeTrack = GetReplayTrack(activeCharacter);
         CharacterBuildEventTrack activeBuildTrack = GetBuildTrack(activeCharacter);
         CharacterWorldEventTrack activeWorldTrack = GetWorldTrack(activeCharacter);
+        Rigidbody activeBody = GetBody(activeCharacter);
 
         PlayableCharacter counterpartCharacter = GetOtherCharacter(activeCharacter);
 
@@ -344,12 +345,14 @@ public class CharacterSwapManager : MonoBehaviour
         CharacterWorldEventTrack counterpartWorldTrack = GetWorldTrack(counterpartCharacter);
 
         EnsureCharacterRootActive(activeTrack);
+        FreezeBodyForPlayback(activeBody);
 
         activeTrack.RestartRecordingFrom(restartTime);
         activeBuildTrack.RestartRecordingFrom(platformSpawner, restartTime);
         activeWorldTrack.RestartRecordingFrom(platformSpawner, restartTime);
 
-        ResetBodyForRecording(GetBody(activeCharacter));
+        ResetBodyForRecording(activeBody);
+        Physics.SyncTransforms();
 
         if (counterpartTrack.HasRecording)
         {
