@@ -255,7 +255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &126024908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2522,7 +2522,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 886773653507880176, guid: a2ababf1f2a1cfb459d0b64c2694619e, type: 3}
       propertyPath: m_text
-      value: Restart Section
+      value: Replay Segment
       objectReference: {fileID: 0}
     - target: {fileID: 3362061831708071564, guid: a2ababf1f2a1cfb459d0b64c2694619e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
