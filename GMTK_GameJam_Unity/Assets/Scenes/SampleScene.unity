@@ -471,7 +471,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 126024911}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 886773653507880176, guid: a2ababf1f2a1cfb459d0b64c2694619e, type: 3}
       propertyPath: m_text
@@ -618,11 +618,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2ababf1f2a1cfb459d0b64c2694619e, type: 3}
---- !u!224 &346020370 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6980431968830440730, guid: a2ababf1f2a1cfb459d0b64c2694619e, type: 3}
-  m_PrefabInstance: {fileID: 346020369}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &353275456
 GameObject:
   m_ObjectHideFlags: 0
@@ -1364,6 +1359,14 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 444952103633397332, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1666332731}
+    - target: {fileID: 444952103633397332, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetMusicVolume
+      objectReference: {fileID: 0}
     - target: {fileID: 910878186971891506, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
       propertyPath: m_Name
       value: SettingsCanvas
@@ -1512,6 +1515,14 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4366660522050680820, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1666332731}
+    - target: {fileID: 4366660522050680820, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetSoundsVolume
+      objectReference: {fileID: 0}
     - target: {fileID: 4850402109560944801, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1539,6 +1550,14 @@ PrefabInstance:
     - target: {fileID: 6775164097191618585, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6777047639202030288, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1666332731}
+    - target: {fileID: 6777047639202030288, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetMasterVolume
       objectReference: {fileID: 0}
     - target: {fileID: 8519701039528519401, guid: 3b6471324ddaa874296ebf7fba6f5fe5, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1982,6 +2001,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23516f4175bf89f48bb90dfc3fb8bf88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformSpawner
+--- !u!114 &1666332731 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9072152022683998281, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
+  m_PrefabInstance: {fileID: 4213872792897208088}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 865110ae53f0ab540a13019bff58f440, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundMixerManager
 --- !u!1001 &1724605825
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2583,6 +2613,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PauseMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 7202975839661281354, guid: f9cb0acdc11b5a14a9e729c940e541c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3068,3 +3102,4 @@ SceneRoots:
   - {fileID: 1098924379}
   - {fileID: 1569948430}
   - {fileID: 353275460}
+  - {fileID: 346020369}
