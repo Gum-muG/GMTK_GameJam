@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     private float coyoteTimeCounter;
     public float fallMultiplier = 2.5f;
 
-    public Transform clone;
+    private Vector3 lastStoodPosition;
 
     public enum MovementState
     {
@@ -75,6 +75,7 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         if (isGrounded)
         {
             coyoteTimeCounter = coyoteTime;
+            lastStoodPosition = transform.position;
         }
         else
         {
@@ -206,6 +207,12 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
     private Vector3 GetSlopeTargetMove()
     {
         return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
+    }
+
+    public void TeleportToLastStood()
+    {
+        Debug.Log("A");
+        rb.position = lastStoodPosition;
     }
 
     public SnapshotInfo SaveSnapshot()

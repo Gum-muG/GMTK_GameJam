@@ -36,7 +36,7 @@ public class TimelineObject : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Name: " + name + ", ID: " + TimelineId);
+        //Debug.Log("Name: " + name + ", ID: " + TimelineId);
     }
 
     private void EnsureId()
