@@ -18,11 +18,9 @@ public class CharacterReplayTrack : MonoBehaviour
     [SerializeField, Min(0.001f)] private float snapshotDelta = 0.02f;
 
     [Header("Registration")]
-    [SerializeField]
-    private bool discoverReplayObjectsInChildren = true;
+    [SerializeField] private bool discoverReplayObjectsInChildren = true;
 
-    private readonly List<IReplayObject> replayObjects =
-        new List<IReplayObject>();
+    private readonly List<IReplayObject> replayObjects = new List<IReplayObject>();
 
     private float snapshotAccumulator;
     private int playbackSnapshotIndex;
@@ -159,7 +157,6 @@ public class CharacterReplayTrack : MonoBehaviour
         ApplySnapshotsUpTo(timelineTime);
     }
 
-  
     // Restores this track to its most recent snapshot at or before targetTime.
     public void SeekTo(float targetTime)
     {
@@ -180,10 +177,7 @@ public class CharacterReplayTrack : MonoBehaviour
 
     public void RestoreStartingPose()
     {
-        transform.SetPositionAndRotation(
-            startingPosition,
-            startingRotation);
-
+        transform.SetPositionAndRotation(startingPosition, startingRotation);
         transform.localScale = startingScale;
     }
 
@@ -194,19 +188,14 @@ public class CharacterReplayTrack : MonoBehaviour
             return;
         }
 
-        replayContainer =
-            ScriptableObject.CreateInstance<ReplayContainer>();
-
-        replayContainer.name =
-            $"{name}_RuntimeReplayContainer";
-
+        replayContainer = ScriptableObject.CreateInstance<ReplayContainer>();
+        replayContainer.name = $"{name}_RuntimeReplayContainer";
         replayContainer.Init();
     }
 
     private void DiscoverReplayObjects()
     {
-        MonoBehaviour[] behaviours =
-            GetComponentsInChildren<MonoBehaviour>(true);
+        MonoBehaviour[] behaviours = GetComponentsInChildren<MonoBehaviour>(true);
 
         foreach (MonoBehaviour behaviour in behaviours)
         {
@@ -219,8 +208,7 @@ public class CharacterReplayTrack : MonoBehaviour
 
     private void TakeSnapshot(float timelineTime)
     {
-        SnapshotData snapshotData =
-            new SnapshotData(timelineTime);
+        SnapshotData snapshotData = new SnapshotData(timelineTime);
 
         foreach (IReplayObject replayObject in replayObjects)
         {
@@ -229,12 +217,8 @@ public class CharacterReplayTrack : MonoBehaviour
                 continue;
             }
 
-            SnapshotInfo info =
-                replayObject.SaveSnapshot();
-
-            snapshotData.AddObjectSnapshot(
-                replayObject.GetId(),
-                info);
+            SnapshotInfo info = replayObject.SaveSnapshot();
+            snapshotData.AddObjectSnapshot(replayObject.GetId(), info);
         }
 
         replayContainer.AddSnapshot(snapshotData);
@@ -242,10 +226,7 @@ public class CharacterReplayTrack : MonoBehaviour
 
     private void ApplySnapshotsUpTo(float targetTime)
     {
-        while (replayContainer.GetSnapshot(
-                   playbackSnapshotIndex,
-                   out SnapshotData snapshot) &&
-               snapshot.frameTime <= targetTime)
+        while (replayContainer.GetSnapshot(playbackSnapshotIndex, out SnapshotData snapshot) && snapshot.frameTime <= targetTime)
         {
             foreach (IReplayObject replayObject in replayObjects)
             {
@@ -254,9 +235,7 @@ public class CharacterReplayTrack : MonoBehaviour
                     continue;
                 }
 
-                if (snapshot.GetObjectSnapshot(
-                        replayObject.GetId(),
-                        out SnapshotInfo info))
+                if (snapshot.GetObjectSnapshot(replayObject.GetId(), out SnapshotInfo info))
                 {
                     replayObject.LoadSnapshot(info);
                 }

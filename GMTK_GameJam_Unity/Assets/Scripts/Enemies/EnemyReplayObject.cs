@@ -6,8 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(TimelineObject))]
 public class EnemyReplayObject : MonoBehaviour
 {
-    private static readonly Dictionary<string, EnemyReplayObject> enemiesById =
-        new Dictionary<string, EnemyReplayObject>();
+    private static readonly Dictionary<string, EnemyReplayObject> enemiesById = new Dictionary<string, EnemyReplayObject>();
 
     [Header("Components")]
     [SerializeField] private enemyAI enemyAi;
@@ -25,16 +24,12 @@ public class EnemyReplayObject : MonoBehaviour
     private Quaternion startingRotation;
     private Vector3 startingScale;
 
-    public string EnemyId =>
-        timelineObject != null
-            ? timelineObject.TimelineId
-            : gameObject.name;
+    public string EnemyId => timelineObject != null ? timelineObject.TimelineId : gameObject.name;
 
     public bool IsDead { get; private set; }
     public bool IsPlaybackDriven { get; private set; }
 
-    public static IEnumerable<EnemyReplayObject> AllEnemies =>
-        enemiesById.Values;
+    public static IEnumerable<EnemyReplayObject> AllEnemies => enemiesById.Values;
 
     private void Awake()
     {
@@ -83,18 +78,13 @@ public class EnemyReplayObject : MonoBehaviour
 
     private void OnDisable()
     {
-        if (enemiesById.TryGetValue(
-                EnemyId,
-                out EnemyReplayObject registeredEnemy) &&
-            registeredEnemy == this)
+        if (enemiesById.TryGetValue(EnemyId, out EnemyReplayObject registeredEnemy) && registeredEnemy == this)
         {
             enemiesById.Remove(EnemyId);
         }
     }
 
-    public static bool TryGetEnemy(
-        string enemyId,
-        out EnemyReplayObject enemy)
+    public static bool TryGetEnemy(string enemyId, out EnemyReplayObject enemy)
     {
         return enemiesById.TryGetValue(enemyId, out enemy);
     }
@@ -147,11 +137,7 @@ public class EnemyReplayObject : MonoBehaviour
             return false;
         }
 
-        bool recorded = manager.RecordEnemyDied(
-            EnemyId,
-            sourceProjectileId,
-            transform.position,
-            transform.rotation);
+        bool recorded = manager.RecordEnemyDied(EnemyId, sourceProjectileId, transform.position, transform.rotation);
 
         if (recorded)
         {
@@ -161,24 +147,20 @@ public class EnemyReplayObject : MonoBehaviour
         return recorded;
     }
 
-        public void ApplyRecordedPose(
-            Vector3 position,
-            Quaternion rotation)
+    public void ApplyRecordedPose(Vector3 position, Quaternion rotation)
+    {
+        if (IsDead)
         {
-            if (IsDead)
-            {
-                return;
-            }
-
-            transform.SetPositionAndRotation(
-                position,
-                rotation);
-
-            if (agent != null && agent.enabled)
-            {
-                agent.nextPosition = position;
-            }
+            return;
         }
+
+        transform.SetPositionAndRotation(position, rotation);
+
+        if (agent != null && agent.enabled)
+        {
+            agent.nextPosition = position;
+        }
+    }
 
     public Vector3 GetVelocity()
     {
@@ -275,14 +257,9 @@ public class EnemyReplayObject : MonoBehaviour
 
     private void RegisterEnemy()
     {
-        if (enemiesById.TryGetValue(
-                EnemyId,
-                out EnemyReplayObject existingEnemy) &&
-            existingEnemy != this)
+        if (enemiesById.TryGetValue(EnemyId, out EnemyReplayObject existingEnemy) && existingEnemy != this)
         {
-            Debug.LogWarning(
-                $"Duplicate enemy timeline ID '{EnemyId}'. " +
-                "Generate a different ID on one enemy.");
+            Debug.LogWarning($"Duplicate enemy timeline ID '{EnemyId}'. " + "Generate a different ID on one enemy.");
         }
 
         enemiesById[EnemyId] = this;

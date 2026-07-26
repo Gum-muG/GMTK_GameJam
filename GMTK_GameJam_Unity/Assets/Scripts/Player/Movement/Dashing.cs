@@ -25,8 +25,7 @@ public class Dashing : MonoBehaviour
 
     private void Update()
     {
-        if (canDash &&
-            Input.GetKeyDown(KeyCode.LeftControl))
+        if (canDash && Input.GetKeyDown(KeyCode.LeftControl))
         {
             canDash = false;
             isDashing = true;
@@ -42,9 +41,7 @@ public class Dashing : MonoBehaviour
             isDashing = false;
         }
 
-        if (!canDash &&
-            playerMovement.isGrounded &&
-            dashTimer <= 0f)
+        if (!canDash && playerMovement.isGrounded && dashTimer <= 0f)
         {
             canDash = true;
             isDashing = false;
@@ -59,12 +56,7 @@ public class Dashing : MonoBehaviour
             return;
         }
 
-        rb.AddForce(
-            forward.forward *
-            Mathf.Pow(
-                playerMovement.dashSpeed,
-                dashTimer / dashTime * 2f),
-            ForceMode.Force);
+        rb.AddForce(forward.forward * Mathf.Pow(playerMovement.dashSpeed, dashTimer / dashTime * 2f), ForceMode.Force);
     }
 
     private void OnDisable()

@@ -60,13 +60,7 @@ public class WorldPlacement : MonoBehaviour
 
     private bool CanBuildNow()
     {
-        if (CharacterSwapManager.instance != null)
-        {
-            return CharacterSwapManager.instance.IsRecording;
-        }
-
-        return ReplayManager.instance != null &&
-               ReplayManager.instance.IsRecording;
+        return CharacterSwapManager.instance != null && CharacterSwapManager.instance.IsRecording;
     }
 
     private void BeginPlacement()
@@ -78,15 +72,13 @@ public class WorldPlacement : MonoBehaviour
 
         if (!CanBuildNow())
         {
-            Debug.LogWarning(
-                "The active character must be recording before building.");
+            Debug.LogWarning("The active character must be recording before building.");
             return;
         }
 
         if (spawner == null || cameraTransform == null)
         {
-            Debug.LogError(
-                "WorldPlacement needs a PlatformSpawner and camera Transform.");
+            Debug.LogError("WorldPlacement needs a PlatformSpawner and camera Transform.");
             return;
         }
 
@@ -100,10 +92,7 @@ public class WorldPlacement : MonoBehaviour
         float scrollInput = Input.mouseScrollDelta.y;
 
         placementDistance += scrollInput * scrollSpeed;
-        placementDistance = Mathf.Clamp(
-            placementDistance,
-            minPlacementDistance,
-            maxPlacementDistance);
+        placementDistance = Mathf.Clamp(placementDistance, minPlacementDistance, maxPlacementDistance);
     }
 
     private void UpdatePlacementRotation()
@@ -116,36 +105,25 @@ public class WorldPlacement : MonoBehaviour
 
     private void UpdatePreviewPosition()
     {
-        Ray placementRay = new Ray(
-            cameraTransform.position,
-            cameraTransform.forward);
+        Ray placementRay = new Ray(cameraTransform.position, cameraTransform.forward);
 
-        Vector3 placementPosition =
-            placementRay.GetPoint(placementDistance);
+        Vector3 placementPosition = placementRay.GetPoint(placementDistance);
 
-        if (Physics.Raycast(
-                placementRay,
-                out RaycastHit hit,
-                placementDistance,
-                placementCollisionLayers))
+        if (Physics.Raycast(placementRay, out RaycastHit hit, placementDistance, placementCollisionLayers))
         {
             placementPosition = hit.point;
         }
 
-        Quaternion placementQuaternion =
-            Quaternion.Euler(0f, placementRotation, 0f);
+        Quaternion placementQuaternion = Quaternion.Euler(0f, placementRotation, 0f);
 
-        spawner.MovePreview(
-            placementPosition,
-            placementQuaternion);
+        spawner.MovePreview(placementPosition, placementQuaternion);
     }
 
     private void ConfirmPlacement()
     {
         if (spawner == null)
         {
-            Debug.LogError(
-                "WorldPlacement has no PlatformSpawner assigned.");
+            Debug.LogError("WorldPlacement has no PlatformSpawner assigned.");
             return;
         }
 

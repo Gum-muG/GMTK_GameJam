@@ -41,50 +41,45 @@ public class TimelineTimerUI : MonoBehaviour
     {
         if (activeCharacterText != null)
         {
-            activeCharacterText.text =
-                timelineManager.ActiveCharacter == CharacterSwapManager.PlayableCharacter.Ice ? "CREATION" : "DESTRUCTION";
+            activeCharacterText.text = timelineManager.ActiveCharacter == CharacterSwapManager.PlayableCharacter.Ice ? "CREATION" : "DESTRUCTION";
             if (timelineManager.ActiveCharacter == CharacterSwapManager.PlayableCharacter.Ice)
-                activeCharacterText.color = new Color(0, 1 , .35f);
+                activeCharacterText.color = new Color(0, 1, .35f);
             else
-                activeCharacterText.color = new Color(1, 0 , .17f);
+                activeCharacterText.color = new Color(1, 0, .17f);
         }
 
-        fireTimelineImage.sizeDelta = new Vector2(timelineManager.FireTime / (originalBudget / 2) * timelinePanel.sizeDelta.x,fireTimelineImage.sizeDelta.y);
-        iceTimelineImage.sizeDelta = new Vector2(timelineManager.IceTime / (originalBudget / 2) * timelinePanel.sizeDelta.x,iceTimelineImage.sizeDelta.y);
-
+        fireTimelineImage.sizeDelta = new Vector2(timelineManager.FireTime / (originalBudget / 2) * timelinePanel.sizeDelta.x, fireTimelineImage.sizeDelta.y);
+        iceTimelineImage.sizeDelta = new Vector2(timelineManager.IceTime / (originalBudget / 2) * timelinePanel.sizeDelta.x, iceTimelineImage.sizeDelta.y);
 
         if (budgetTimerText != null)
         {
-            budgetTimerText.text =
-                $"{FormatTime(timelineManager.TimeBudget)}";
+            budgetTimerText.text = $"{FormatTime(timelineManager.TimeBudget)}";
         }
 
         if (iceTimerText != null)
         {
-            iceTimerText.text =
-                $"{FormatTime(timelineManager.IceTime)}";
+            iceTimerText.text = $"{FormatTime(timelineManager.IceTime)}";
             if (timelineManager.ActiveCharacter == CharacterSwapManager.PlayableCharacter.Ice)
             {
                 iceTimerText.fontSize = 65;
-                iceTimerText.color = new Color(0, 1 , .35f);
+                iceTimerText.color = new Color(0, 1, .35f);
                 iceTimerText.rectTransform.sizeDelta = new Vector2(340, 50);
                 fireTimerText.fontSize = 40;
-                fireTimerText.color = new Color(.43f, 0 , .07f);
+                fireTimerText.color = new Color(.43f, 0, .07f);
                 fireTimerText.rectTransform.sizeDelta = new Vector2(230, 50);
             }
         }
 
         if (fireTimerText != null)
         {
-            fireTimerText.text =
-                $"{FormatTime(timelineManager.FireTime)}";
+            fireTimerText.text = $"{FormatTime(timelineManager.FireTime)}";
             if (timelineManager.ActiveCharacter == CharacterSwapManager.PlayableCharacter.Fire)
             {
                 iceTimerText.fontSize = 40;
-                iceTimerText.color = new Color(0, .33f , .11f);
+                iceTimerText.color = new Color(0, .33f, .11f);
                 iceTimerText.rectTransform.sizeDelta = new Vector2(230, 50);
                 fireTimerText.fontSize = 65;
-                fireTimerText.color = new Color(1, 0 , .17f);
+                fireTimerText.color = new Color(1, 0, .17f);
                 fireTimerText.rectTransform.sizeDelta = new Vector2(340, 50);
             }
         }

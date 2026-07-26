@@ -94,16 +94,12 @@ public class WallRunning : MonoBehaviour
         xIn = Input.GetAxisRaw("Horizontal");
         yIn = Input.GetAxisRaw("Vertical");
 
-        if (!playerMovement.wallRunning &&
-            wallJumpCoyoteTimer > 0f)
+        if (!playerMovement.wallRunning && wallJumpCoyoteTimer > 0f)
         {
             wallJumpCoyoteTimer -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) &&
-            !playerMovement.isGrounded &&
-            (playerMovement.wallRunning ||
-             wallJumpCoyoteTimer > 0f))
+        if (Input.GetKeyDown(KeyCode.Space) && !playerMovement.isGrounded && (playerMovement.wallRunning || wallJumpCoyoteTimer > 0f))
         {
             if (playerMovement.wallRunning)
             {
@@ -150,10 +146,7 @@ public class WallRunning : MonoBehaviour
                 return;
             }
         }
-        else if (wallNum > 0 &&
-                 yIn > 0f &&
-                 !playerMovement.isGrounded &&
-                 !exitingWall)
+        else if (wallNum > 0 && yIn > 0f && !playerMovement.isGrounded && !exitingWall)
         {
             StartWallRun();
         }
@@ -181,17 +174,13 @@ public class WallRunning : MonoBehaviour
         wallDetachTimer = 0f;
         wallJumpCoyoteTimer = 0f;
 
-        rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x,
-            0f,
-            rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         playerCamera.BeginWallRunClamp(activeWallNormal);
 
         playerCamera.FOV(90f);
 
-        bool wallIsOnRight =
-            Vector3.Dot(activeWallNormal, forward.right) < 0f;
+        bool wallIsOnRight = Vector3.Dot(activeWallNormal, forward.right) < 0f;
 
         if (wallIsOnRight)
         {
@@ -207,31 +196,18 @@ public class WallRunning : MonoBehaviour
     {
         rb.useGravity = false;
 
-        rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x,
-            0f,
-            rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        Vector3 wallForward =
-            Vector3.Cross(activeWallNormal, transform.up);
+        Vector3 wallForward = Vector3.Cross(activeWallNormal, transform.up);
 
-        if ((forward.forward - wallForward).magnitude >
-            (forward.forward + wallForward).magnitude)
+        if ((forward.forward - wallForward).magnitude > (forward.forward + wallForward).magnitude)
         {
             wallForward = -wallForward;
         }
 
-        rb.AddForce(
-            wallForward * wallRunForce,
-            ForceMode.Force);
-
-        rb.AddForce(
-            -activeWallNormal * wallStickForce,
-            ForceMode.Force);
-
-        rb.AddForce(
-            transform.up * gravityCounterforce,
-            ForceMode.Force);
+        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+        rb.AddForce(-activeWallNormal * wallStickForce, ForceMode.Force);
+        rb.AddForce(transform.up * gravityCounterforce, ForceMode.Force);
     }
 
     private void StopWallRun()
@@ -257,29 +233,17 @@ public class WallRunning : MonoBehaviour
 
         Vector3 lookDirection = cameraTransform.forward;
 
-        lookDirection.y =
-            Mathf.Max(lookDirection.y, 0f);
+        lookDirection.y = Mathf.Max(lookDirection.y, 0f);
 
         lookDirection.Normalize();
 
-        Vector3 baseForce =
-            transform.up * wallJumpUpForce +
-            activeWallNormal * wallJumpSideForce;
+        Vector3 baseForce = transform.up * wallJumpUpForce + activeWallNormal * wallJumpSideForce;
+        Vector3 lookForce = lookDirection * lookDirectionForce;
+        Vector3 forceToApply = baseForce + lookForce;
 
-        Vector3 lookForce =
-            lookDirection * lookDirectionForce;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        Vector3 forceToApply =
-            baseForce + lookForce;
-
-        rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x,
-            0f,
-            rb.linearVelocity.z);
-
-        rb.AddForce(
-            forceToApply,
-            ForceMode.Impulse);
+        rb.AddForce(forceToApply, ForceMode.Impulse);
 
         dashing.ResetDashCooldown();
     }
@@ -317,7 +281,6 @@ public class WallRunning : MonoBehaviour
         }
 
         wallNum = Mathf.Max(0, wallNum - 1);
-
     }
 
     private void UpdateWallNormal(Collision collision)
@@ -327,11 +290,9 @@ public class WallRunning : MonoBehaviour
             return;
         }
 
-        wallHitNormal =
-            collision.GetContact(0).normal.normalized;
+        wallHitNormal = collision.GetContact(0).normal.normalized;
 
-        if (playerMovement != null &&
-            playerMovement.wallRunning)
+        if (playerMovement != null && playerMovement.wallRunning)
         {
             activeWallNormal = wallHitNormal;
         }

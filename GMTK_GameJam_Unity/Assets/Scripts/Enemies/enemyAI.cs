@@ -49,16 +49,10 @@ public class enemyAI : MonoBehaviour
             return;
         }
 
-        float distanceToPlayer =
-            Vector3.Distance(
-                transform.position,
-                player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        playerInSightRange =
-            distanceToPlayer <= sightRange;
-
-        playerInAttackRange =
-            distanceToPlayer <= attackRange;
+        playerInSightRange = distanceToPlayer <= sightRange;
+        playerInAttackRange = distanceToPlayer <= attackRange;
 
         if (playerInAttackRange && playerInSightRange)
         {
@@ -109,14 +103,9 @@ public class enemyAI : MonoBehaviour
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
 
-        Vector3 randomPosition = transform.position +
-                                 new Vector3(randomX, 0f, randomZ);
+        Vector3 randomPosition = transform.position + new Vector3(randomX, 0f, randomZ);
 
-        if (NavMesh.SamplePosition(
-                randomPosition,
-                out NavMeshHit hit,
-                2f,
-                NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
             walkPoint = hit.position;
             walkPointSet = true;

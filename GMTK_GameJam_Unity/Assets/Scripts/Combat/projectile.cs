@@ -26,9 +26,7 @@ public class Projectile : MonoBehaviour
         {
             TimelineObject timelineObject = GetComponent<TimelineObject>();
 
-            timelineId = timelineObject != null
-                ? timelineObject.TimelineId
-                : gameObject.name;
+            timelineId = timelineObject != null ? timelineObject.TimelineId : gameObject.name;
         }
 
         if (!replayVisualOnly)
@@ -39,30 +37,17 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (replayVisualOnly ||
-            ending ||
-            CharacterSwapManager.instance == null)
+        if (replayVisualOnly || ending || CharacterSwapManager.instance == null)
         {
             return;
         }
 
-        Vector3 velocity = projectileBody != null
-            ? projectileBody.linearVelocity
-            : Vector3.zero;
+        Vector3 velocity = projectileBody != null ? projectileBody.linearVelocity : Vector3.zero;
 
-        CharacterSwapManager.instance.RecordProjectileSample(
-            timelineId,
-            transform.position,
-            transform.rotation,
-            velocity);
+        CharacterSwapManager.instance.RecordProjectileSample(timelineId, transform.position, transform.rotation, velocity);
     }
 
-    public void Initialize(
-        string projectileId,
-        string sourceShooterId,
-        ProjectileFaction projectileFaction,
-        bool isReplayVisualOnly,
-        float projectileLifetime)
+    public void Initialize(string projectileId, string sourceShooterId, ProjectileFaction projectileFaction, bool isReplayVisualOnly, float projectileLifetime)
     {
         timelineId = projectileId;
         shooterId = sourceShooterId;
@@ -72,10 +57,7 @@ public class Projectile : MonoBehaviour
         initialized = true;
     }
 
-    public void ApplyReplaySample(
-        Vector3 position,
-        Quaternion rotation,
-        Vector3 recordedVelocity)
+    public void ApplyReplaySample(Vector3 position, Quaternion rotation, Vector3 recordedVelocity)
     {
         if (!replayVisualOnly)
         {
@@ -97,14 +79,11 @@ public class Projectile : MonoBehaviour
 
         if (faction == ProjectileFaction.Enemy)
         {
-            CharacterDeathManager.instance?.TryKillFromProjectile(
-                collision.gameObject,
-                timelineId);
+            CharacterDeathManager.instance?.TryKillFromProjectile(collision.gameObject, timelineId);
         }
         else
         {
-            EnemyReplayObject enemy =
-                collision.gameObject.GetComponentInParent<EnemyReplayObject>();
+            EnemyReplayObject enemy = collision.gameObject.GetComponentInParent<EnemyReplayObject>();
 
             enemy?.TryKill(timelineId);
         }
@@ -134,19 +113,9 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        Vector3 velocity = projectileBody != null
-            ? projectileBody.linearVelocity
-            : Vector3.zero;
+        Vector3 velocity = projectileBody != null ? projectileBody.linearVelocity : Vector3.zero;
 
-        manager.RecordProjectileSample(
-            timelineId,
-            transform.position,
-            transform.rotation,
-            velocity);
-
-        manager.RecordProjectileDespawned(
-            timelineId,
-            transform.position,
-            transform.rotation);
+        manager.RecordProjectileSample(timelineId, transform.position, transform.rotation, velocity);
+        manager.RecordProjectileDespawned(timelineId, transform.position, transform.rotation);
     }
 }

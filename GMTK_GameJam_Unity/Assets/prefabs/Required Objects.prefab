@@ -234,6 +234,8 @@ MonoBehaviour:
   - {fileID: 0}
   iceCameraRig: {fileID: 0}
   iceBody: {fileID: 0}
+  iceParticles: {fileID: 0}
+  iceDeathMarkerHolder: {fileID: 0}
   fireReplayTrack: {fileID: 0}
   fireBuildEventTrack: {fileID: 0}
   fireWorldEventTrack: {fileID: 0}
@@ -244,7 +246,10 @@ MonoBehaviour:
   - {fileID: 0}
   fireCameraRig: {fileID: 0}
   fireBody: {fileID: 0}
+  fireParticles: {fileID: 0}
+  fireDeathMarkerHolder: {fileID: 0}
   platformSpawner: {fileID: 3820140355103255492}
+  timeBudget: 60
   startingCharacter: 0
   startAutomatically: 1
   hideUnrecordedCounterpart: 1

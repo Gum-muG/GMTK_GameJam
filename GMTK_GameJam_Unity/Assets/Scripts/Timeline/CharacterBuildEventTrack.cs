@@ -4,12 +4,9 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class CharacterBuildEventTrack : MonoBehaviour
 {
-    [SerializeField]
-    private List<BuildReplayEventData> events =
-        new List<BuildReplayEventData>();
+    [SerializeField] private List<BuildReplayEventData> events = new List<BuildReplayEventData>();
 
-    private readonly Dictionary<string, GameObject> spawnedObjects =
-        new Dictionary<string, GameObject>();
+    private readonly Dictionary<string, GameObject> spawnedObjects = new Dictionary<string, GameObject>();
 
     private PlatformSpawner platformSpawner;
     private int nextEventIndex;
@@ -44,9 +41,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
         BeginNewRecording(spawner);
     }
 
-    public void BeginPlayback(
-        PlatformSpawner spawner,
-        float startTime)
+    public void BeginPlayback(PlatformSpawner spawner, float startTime)
     {
         platformSpawner = spawner;
         nextEventIndex = FindFirstEventAfter(startTime);
@@ -68,13 +63,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
         isPlayingBack = false;
     }
 
-    public bool RecordBuildEvent(
-        float timelineTime,
-        string objectId,
-        PlatformSpawner.BuildType buildType,
-        Vector3 position,
-        Quaternion rotation,
-        GameObject spawnedObject)
+    public bool RecordBuildEvent(float timelineTime, string objectId, PlatformSpawner.BuildType buildType, Vector3 position, Quaternion rotation, GameObject spawnedObject)
     {
         if (!isRecording)
         {
@@ -105,25 +94,21 @@ public class CharacterBuildEventTrack : MonoBehaviour
             return;
         }
 
-        while (nextEventIndex < events.Count &&
-               events[nextEventIndex].time <= timelineTime)
+        while (nextEventIndex < events.Count && events[nextEventIndex].time <= timelineTime)
         {
             ReplayBuildEvent(events[nextEventIndex]);
             nextEventIndex++;
         }
     }
 
-    public void RebuildWorldUpTo(
-        PlatformSpawner spawner,
-        float timelineTime)
+    public void RebuildWorldUpTo(PlatformSpawner spawner, float timelineTime)
     {
         platformSpawner = spawner;
         ClearSpawnedObjects();
 
         nextEventIndex = 0;
 
-        while (nextEventIndex < events.Count &&
-               events[nextEventIndex].time <= timelineTime)
+        while (nextEventIndex < events.Count && events[nextEventIndex].time <= timelineTime)
         {
             ReplayBuildEvent(events[nextEventIndex]);
             nextEventIndex++;
@@ -152,8 +137,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
     {
         int index = 0;
 
-        while (index < events.Count &&
-               events[index].time <= timelineTime)
+        while (index < events.Count && events[index].time <= timelineTime)
         {
             index++;
         }
@@ -165,8 +149,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
     {
         if (platformSpawner == null)
         {
-            Debug.LogError(
-                $"{name}: CharacterBuildEventTrack needs a PlatformSpawner.");
+            Debug.LogError($"{name}: CharacterBuildEventTrack needs a PlatformSpawner.");
             return;
         }
 
@@ -175,11 +158,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
             return;
         }
 
-        GameObject spawnedObject = platformSpawner.SpawnRecorded(
-            replayEvent.buildType,
-            replayEvent.position,
-            replayEvent.rotation,
-            replayEvent.objectId);
+        GameObject spawnedObject = platformSpawner.SpawnRecorded(replayEvent.buildType, replayEvent.position, replayEvent.rotation, replayEvent.objectId);
 
         if (spawnedObject != null)
         {

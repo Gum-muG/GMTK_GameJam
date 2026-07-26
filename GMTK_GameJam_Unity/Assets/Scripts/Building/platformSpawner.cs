@@ -24,8 +24,7 @@ public class PlatformSpawner : MonoBehaviour
     public string groundLayerName = "Ground";
     public string wallLayerName = "Wall";
 
-    private readonly Dictionary<string, GameObject> spawnedObjectsById =
-        new Dictionary<string, GameObject>();
+    private readonly Dictionary<string, GameObject> spawnedObjectsById = new Dictionary<string, GameObject>();
 
     private GameObject currentPreview;
     private int nextBuildId;
@@ -45,9 +44,7 @@ public class PlatformSpawner : MonoBehaviour
 
     public void ToggleBuildType()
     {
-        currentBuildType = currentBuildType == BuildType.Platform
-            ? BuildType.Wall
-            : BuildType.Platform;
+        currentBuildType = currentBuildType == BuildType.Platform ? BuildType.Wall : BuildType.Platform;
 
         if (currentPreview == null)
         {
@@ -65,30 +62,17 @@ public class PlatformSpawner : MonoBehaviour
     {
         string objectId = $"{currentBuildType}_{nextBuildId++}";
 
-        SpawnRecorded(
-            currentBuildType,
-            position,
-            rotation,
-            objectId);
+        SpawnRecorded(currentBuildType, position, rotation, objectId);
     }
 
-    public GameObject SpawnRecorded(
-        BuildType buildType,
-        Vector3 position,
-        Quaternion rotation,
-        string objectId)
+    public GameObject SpawnRecorded(BuildType buildType, Vector3 position, Quaternion rotation, string objectId)
     {
-        if (spawnedObjectsById.TryGetValue(
-                objectId,
-                out GameObject existingObject) &&
-            existingObject != null)
+        if (spawnedObjectsById.TryGetValue(objectId, out GameObject existingObject) && existingObject != null)
         {
             return existingObject;
         }
 
-        GameObject prefab = buildType == BuildType.Platform
-            ? platformPrefab
-            : wallPrefab;
+        GameObject prefab = buildType == BuildType.Platform ? platformPrefab : wallPrefab;
 
         if (prefab == null)
         {
@@ -99,8 +83,7 @@ public class PlatformSpawner : MonoBehaviour
         GameObject spawnedObject = Instantiate(prefab, position, rotation);
         spawnedObject.name = objectId;
 
-        TimelineObject timelineObject =
-            spawnedObject.GetComponent<TimelineObject>();
+        TimelineObject timelineObject = spawnedObject.GetComponent<TimelineObject>();
 
         if (timelineObject == null)
         {
@@ -109,13 +92,9 @@ public class PlatformSpawner : MonoBehaviour
 
         timelineObject.SetTimelineId(objectId);
 
-        string layerName = buildType == BuildType.Platform
-            ? groundLayerName
-            : wallLayerName;
+        string layerName = buildType == BuildType.Platform ? groundLayerName : wallLayerName;
 
-        SetLayerRecursively(
-            spawnedObject,
-            LayerMask.NameToLayer(layerName));
+        SetLayerRecursively(spawnedObject, LayerMask.NameToLayer(layerName));
 
         spawnedObjectsById[objectId] = spawnedObject;
         return spawnedObject;
@@ -125,8 +104,7 @@ public class PlatformSpawner : MonoBehaviour
     {
         CharacterSwapManager manager = CharacterSwapManager.instance;
 
-        if (manager != null &&
-            !manager.RecordPlatformDespawned(objectId))
+        if (manager != null && !manager.RecordPlatformDespawned(objectId))
         {
             return false;
         }
@@ -136,9 +114,7 @@ public class PlatformSpawner : MonoBehaviour
 
     public bool DespawnRecorded(string objectId)
     {
-        if (!spawnedObjectsById.TryGetValue(
-                objectId,
-                out GameObject spawnedObject))
+        if (!spawnedObjectsById.TryGetValue(objectId, out GameObject spawnedObject))
         {
             return false;
         }
@@ -158,25 +134,19 @@ public class PlatformSpawner : MonoBehaviour
     {
         DestroyPreview();
 
-        GameObject previewPrefab = currentBuildType == BuildType.Platform
-            ? platformPreviewPrefab
-            : wallPreviewPrefab;
+        GameObject previewPrefab = currentBuildType == BuildType.Platform ? platformPreviewPrefab : wallPreviewPrefab;
 
         if (previewPrefab == null)
         {
-            Debug.LogError(
-                $"No preview prefab assigned for {currentBuildType}.");
+            Debug.LogError($"No preview prefab assigned for {currentBuildType}.");
             return;
         }
 
         currentPreview = Instantiate(previewPrefab);
 
-        SetLayerRecursively(
-            currentPreview,
-            LayerMask.NameToLayer(previewLayerName));
+        SetLayerRecursively(currentPreview, LayerMask.NameToLayer(previewLayerName));
 
-        foreach (Collider previewCollider in
-                 currentPreview.GetComponentsInChildren<Collider>())
+        foreach (Collider previewCollider in currentPreview.GetComponentsInChildren<Collider>())
         {
             previewCollider.enabled = true;
             previewCollider.isTrigger = true;
@@ -187,9 +157,7 @@ public class PlatformSpawner : MonoBehaviour
     {
         if (currentPreview != null)
         {
-            currentPreview.transform.SetPositionAndRotation(
-                position,
-                rotation);
+            currentPreview.transform.SetPositionAndRotation(position, rotation);
         }
     }
 
@@ -205,40 +173,18 @@ public class PlatformSpawner : MonoBehaviour
         BuildType placedType = currentBuildType;
         string objectId = $"{placedType}_{nextBuildId++}";
 
-        GameObject spawnedObject = SpawnRecorded(
-            placedType,
-            position,
-            rotation,
-            objectId);
+        GameObject spawnedObject = SpawnRecorded(placedType, position, rotation, objectId);
 
         bool recordedByCharacterTimeline = false;
 
         if (CharacterSwapManager.instance != null)
         {
-            recordedByCharacterTimeline =
-                CharacterSwapManager.instance.RecordBuildEvent(
-                    objectId,
-                    placedType,
-                    position,
-                    rotation,
-                    spawnedObject);
-        }
-        else
-        {
-            TimelineEventRecorder.instance?.RecordBuildEvent(
-                objectId,
-                placedType,
-                position,
-                rotation,
-                spawnedObject);
+            recordedByCharacterTimeline = CharacterSwapManager.instance.RecordBuildEvent(objectId, placedType, position, rotation, spawnedObject);
         }
 
-        if (CharacterSwapManager.instance != null &&
-            !recordedByCharacterTimeline &&
-            spawnedObject != null)
+        if (CharacterSwapManager.instance != null && !recordedByCharacterTimeline && spawnedObject != null)
         {
-            Debug.LogWarning(
-                "Placement was not recorded, so the spawned object was removed.");
+            Debug.LogWarning("Placement was not recorded, so the spawned object was removed.");
 
             DespawnRecorded(objectId);
         }

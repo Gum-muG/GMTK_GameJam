@@ -66,16 +66,11 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         }
 
         rb.freezeRotation = true;
-
     }
 
     private void Update()
     {
-        isGrounded = Physics.Raycast(
-            transform.position,
-            Vector3.down,
-            playerHeight * 0.5f + 0.2f,
-            groundLayer);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
 
         if (isGrounded)
         {
@@ -109,9 +104,7 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
             movementState = MovementState.AIR;
         }
 
-        if (Input.GetKeyDown(jumpKey) &&
-            canJump &&
-            (coyoteTimeCounter > 0f || isGrounded))
+        if (Input.GetKeyDown(jumpKey) && canJump && (coyoteTimeCounter > 0f || isGrounded))
         {
             Jump();
             coyoteTimeCounter = 0f;
@@ -122,26 +115,17 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         {
             if (rb.linearVelocity.magnitude > speed)
             {
-                rb.linearVelocity =
-                    rb.linearVelocity.normalized * speed;
+                rb.linearVelocity = rb.linearVelocity.normalized * speed;
             }
         }
         else
         {
-            Vector3 baseVel = new Vector3(
-                rb.linearVelocity.x,
-                0f,
-                rb.linearVelocity.z);
+            Vector3 baseVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
             if (baseVel.magnitude > speed)
             {
-                Vector3 normalizedVel =
-                    baseVel.normalized * speed;
-
-                rb.linearVelocity = new Vector3(
-                    normalizedVel.x,
-                    rb.linearVelocity.y,
-                    normalizedVel.z);
+                Vector3 normalizedVel = baseVel.normalized * speed;
+                rb.linearVelocity = new Vector3(normalizedVel.x, rb.linearVelocity.y, normalizedVel.z);
             }
         }
 
@@ -164,39 +148,27 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
             moveDir = Vector3.zero;
         }
 
-        if (rb.linearVelocity.y < 0f &&
-            !isGrounded &&
-            !wallRunning)
+        if (rb.linearVelocity.y < 0f && !isGrounded && !wallRunning)
         {
-            rb.AddForce(
-                Vector3.down * fallMultiplier,
-                ForceMode.Acceleration);
+            rb.AddForce(Vector3.down * fallMultiplier, ForceMode.Acceleration);
         }
 
         if (OnSlope() && !exitingSlope)
         {
-            rb.AddForce(
-                GetSlopeTargetMove() * speed * 20f,
-                ForceMode.Force);
+            rb.AddForce(GetSlopeTargetMove() * speed * 20f, ForceMode.Force);
 
             if (rb.linearVelocity.y > 0)
             {
-                rb.AddForce(
-                    Vector3.down * 30f,
-                    ForceMode.Force);
+                rb.AddForce(Vector3.down * 30f, ForceMode.Force);
             }
         }
         else if (isGrounded)
         {
-            rb.AddForce(
-                moveDir.normalized * speed * 10,
-                ForceMode.Force);
+            rb.AddForce(moveDir.normalized * speed * 10, ForceMode.Force);
         }
         else
         {
-            rb.AddForce(
-                moveDir.normalized * speed * 10 * airControl,
-                ForceMode.Force);
+            rb.AddForce(moveDir.normalized * speed * 10 * airControl, ForceMode.Force);
         }
 
         if (!wallRunning)
@@ -210,14 +182,8 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         exitingSlope = true;
         canJump = false;
 
-        rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x,
-            0f,
-            rb.linearVelocity.z);
-
-        rb.AddForce(
-            transform.up * jumpHeight,
-            ForceMode.Impulse);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
     }
 
     private void ResetJump()
@@ -228,17 +194,9 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
 
     private bool OnSlope()
     {
-        if (Physics.Raycast(
-                transform.position,
-                Vector3.down,
-                out slopeHit,
-                playerHeight * 0.5f + 0.3f,
-                groundLayer,
-                QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f, groundLayer, QueryTriggerInteraction.Ignore))
         {
-            float angle =
-                Vector3.Angle(Vector3.up, slopeHit.normal);
-
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
         }
 
@@ -247,9 +205,7 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
 
     private Vector3 GetSlopeTargetMove()
     {
-        return Vector3.ProjectOnPlane(
-            moveDir,
-            slopeHit.normal).normalized;
+        return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
     }
 
     public SnapshotInfo SaveSnapshot()
@@ -258,27 +214,21 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
         {
             id = GetId(),
             position = transform.position,
-
             rotation = transform.rotation,
-
             state = movementState
         };
     }
 
     public void LoadSnapshot(SnapshotInfo info)
     {
-        PlayerSnapshotInfo playerSnapshot =
-            info as PlayerSnapshotInfo;
+        PlayerSnapshotInfo playerSnapshot = info as PlayerSnapshotInfo;
 
         if (playerSnapshot == null)
         {
             return;
         }
 
-        transform.SetPositionAndRotation(
-            playerSnapshot.position,
-            playerSnapshot.rotation);
-
+        transform.SetPositionAndRotation(playerSnapshot.position, playerSnapshot.rotation);
         movementState = playerSnapshot.state;
     }
 

@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ReplayContainer", menuName = "Scriptable Objects/ReplayContainer")]
-
 public class ReplayContainer : ScriptableObject
 {
-    [SerializeField]
-    private List<SnapshotData> m_snapshots;
+    [SerializeField] private List<SnapshotData> m_snapshots;
 
     public void Init()
     {
