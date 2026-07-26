@@ -235,7 +235,24 @@ public class PlayerMovement : MonoBehaviour, IReplayObject
             return;
         }
 
-        transform.SetPositionAndRotation(playerSnapshot.position, playerSnapshot.rotation);
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.position = playerSnapshot.position;
+            rb.rotation = playerSnapshot.rotation;
+            Physics.SyncTransforms();
+        }
+        else
+        {
+            transform.SetPositionAndRotation(playerSnapshot.position, playerSnapshot.rotation);
+        }
+
         movementState = playerSnapshot.state;
     }
 
