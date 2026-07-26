@@ -48,8 +48,8 @@ public class TimelineTimerUI : MonoBehaviour
                 activeCharacterText.color = new Color(1, 0, .17f);
         }
 
-        fireTimelineImage.sizeDelta = new Vector2(timelineManager.FireTime / (originalBudget / 2) * timelinePanel.sizeDelta.x, fireTimelineImage.sizeDelta.y);
-        iceTimelineImage.sizeDelta = new Vector2(timelineManager.IceTime / (originalBudget / 2) * timelinePanel.sizeDelta.x, iceTimelineImage.sizeDelta.y);
+        fireTimelineImage.sizeDelta = new Vector2(timelineManager.FireTime / (originalBudget) * timelinePanel.sizeDelta.x, fireTimelineImage.sizeDelta.y);
+        iceTimelineImage.sizeDelta = new Vector2(timelineManager.IceTime / (originalBudget) * timelinePanel.sizeDelta.x, iceTimelineImage.sizeDelta.y);
 
         if (budgetTimerText != null)
         {
