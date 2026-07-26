@@ -24,6 +24,9 @@ public class PlatformSpawner : MonoBehaviour
     public string groundLayerName = "Ground";
     public string wallLayerName = "Wall";
 
+    [Header("Platform lifetime")]
+    [Min(0f)] public float platformLifetime = 5f;
+
     private readonly Dictionary<string, GameObject> spawnedObjectsById = new Dictionary<string, GameObject>();
 
     private GameObject currentPreview;
@@ -171,6 +174,8 @@ public class PlatformSpawner : MonoBehaviour
         Vector3 position = currentPreview.transform.position;
         Quaternion rotation = currentPreview.transform.rotation;
         BuildType placedType = currentBuildType;
+        float lifetime = placedType == BuildType.Platform ? platformLifetime : 0f;
+        
         string objectId = $"{placedType}_{nextBuildId++}";
 
         GameObject spawnedObject = SpawnRecorded(placedType, position, rotation, objectId);
@@ -179,7 +184,7 @@ public class PlatformSpawner : MonoBehaviour
 
         if (CharacterSwapManager.instance != null)
         {
-            recordedByCharacterTimeline = CharacterSwapManager.instance.RecordBuildEvent(objectId, placedType, position, rotation, spawnedObject);
+            recordedByCharacterTimeline = CharacterSwapManager.instance.RecordBuildEvent(objectId, placedType, position, rotation, lifetime, spawnedObject);
         }
 
         if (CharacterSwapManager.instance != null && !recordedByCharacterTimeline && spawnedObject != null)
