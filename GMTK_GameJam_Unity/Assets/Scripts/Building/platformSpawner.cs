@@ -159,10 +159,12 @@ public class PlatformSpawner : MonoBehaviour
 
     public void MovePreview(Vector3 position, Quaternion rotation)
     {
-        if (currentPreview != null)
+        if (currentPreview == null)
         {
-            currentPreview.transform.SetPositionAndRotation(position, rotation);
+            return;
         }
+
+        currentPreview.transform.SetPositionAndRotation(position, rotation);
     }
 
     public void ConfirmPlacement()
