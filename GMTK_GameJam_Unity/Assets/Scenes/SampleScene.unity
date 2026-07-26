@@ -1442,20 +1442,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d849f4d843286cd40986374980dfe384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallRunning
---- !u!1 &954927848 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1156150022688418778, guid: c82e86d360efaf44cac32512936df62e, type: 3}
-  m_PrefabInstance: {fileID: 6523801760257258241}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &954927852 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7125828168706628113, guid: c82e86d360efaf44cac32512936df62e, type: 3}
   m_PrefabInstance: {fileID: 6523801760257258241}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &998485478 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7330743405288994142, guid: 2b4ff44e98f256d4a9b5e169afec2caa, type: 3}
-  m_PrefabInstance: {fileID: 4935197507490458806}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1053154380 stripped
 MonoBehaviour:
@@ -3283,11 +3273,11 @@ PrefabInstance:
     - target: {fileID: 3820140355103255492, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
       propertyPath: wallPrefab
       value: 
-      objectReference: {fileID: 998485478}
+      objectReference: {fileID: 9152010764137602676, guid: c309d8089bd1db44baa5fbf4ec05e0d1, type: 3}
     - target: {fileID: 3820140355103255492, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
       propertyPath: platformPrefab
       value: 
-      objectReference: {fileID: 954927848}
+      objectReference: {fileID: 8282564032629583769, guid: 8538052569e623243b261afc6224a999, type: 3}
     - target: {fileID: 5067751044251060470, guid: 975bf92893a9a014f9485de20fd1abc9, type: 3}
       propertyPath: m_Name
       value: Required Objects

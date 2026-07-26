@@ -161,6 +161,7 @@ public class CharacterSwapManager : MonoBehaviour
         playbackWorldTrack?.ProcessEventsUpTo(nextTime);
 
         recordingTrack.RecordStep(nextTime, elapsedTime);
+        recordingBuildTrack?.ProcessLifetimesUpTo(nextTime);
         recordingWorldTrack?.RecordEnemySnapshots(nextTime);
     }
 
@@ -406,14 +407,14 @@ public class CharacterSwapManager : MonoBehaviour
         EnemyReplayObject.SetAllPlaybackDriven(true);
     }
 
-    public bool RecordBuildEvent(string objectId, PlatformSpawner.BuildType buildType, Vector3 position, Quaternion rotation, GameObject spawnedObject)
+    public bool RecordBuildEvent(string objectId, PlatformSpawner.BuildType buildType, Vector3 position, Quaternion rotation, float lifetime, GameObject spawnedObject)
     {
         if (!IsRecording || recordingBuildTrack == null)
         {
             return false;
         }
 
-        return recordingBuildTrack.RecordBuildEvent(CurrentTime, objectId, buildType, position, rotation, spawnedObject);
+        return recordingBuildTrack.RecordBuildEvent(CurrentTime, objectId, buildType, position, rotation, lifetime, spawnedObject);
     }
 
     public bool IsActiveCharacterObject(GameObject target)

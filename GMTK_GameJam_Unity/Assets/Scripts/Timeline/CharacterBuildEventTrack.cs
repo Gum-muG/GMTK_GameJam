@@ -72,7 +72,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
         isPlayingBack = false;
     }
 
-    public bool RecordBuildEvent(float timelineTime, string objectId, PlatformSpawner.BuildType buildType, Vector3 position, Quaternion rotation, GameObject spawnedObject)
+    public bool RecordBuildEvent(float timelineTime, string objectId, PlatformSpawner.BuildType buildType, Vector3 position, Quaternion rotation, float lifetime, GameObject spawnedObject)
     {
         if (!isRecording)
         {
@@ -82,6 +82,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
         events.Add(new BuildReplayEventData
         {
             time = timelineTime,
+            despawnTime = lifetime > 0f ? timelineTime + lifetime : -1f,
             objectId = objectId,
             buildType = buildType,
             position = position,
@@ -105,22 +106,63 @@ public class CharacterBuildEventTrack : MonoBehaviour
 
         while (nextEventIndex < events.Count && events[nextEventIndex].time <= timelineTime)
         {
-            ReplayBuildEvent(events[nextEventIndex]);
+            ReplayBuildEvent(events[nextEventIndex], timelineTime);
             nextEventIndex++;
         }
+
+        ProcessLifetimesUpTo(timelineTime);
     }
 
     public void RebuildWorldUpTo(PlatformSpawner spawner, float timelineTime)
     {
         platformSpawner = spawner;
         ClearSpawnedObjects();
-
         nextEventIndex = 0;
 
         while (nextEventIndex < events.Count && events[nextEventIndex].time <= timelineTime)
         {
-            ReplayBuildEvent(events[nextEventIndex]);
+            ReplayBuildEvent(events[nextEventIndex], timelineTime);
             nextEventIndex++;
+        }
+
+        ProcessLifetimesUpTo(timelineTime);
+    }
+
+    public void ProcessLifetimesUpTo(float timelineTime)
+    {
+        if (platformSpawner == null)
+        {
+            return;
+        }
+
+        foreach (BuildReplayEventData replayEvent in events)
+        {
+            if (replayEvent.despawnTime <= 0f)
+            {
+                continue;
+            }
+
+            if (!spawnedObjects.TryGetValue(replayEvent.objectId, out GameObject spawnedObject))
+            {
+                continue;
+            }
+
+            float remainingTime = replayEvent.despawnTime - timelineTime;
+
+            PlatformDespawnWarning warning = spawnedObject.GetComponent<PlatformDespawnWarning>();
+
+            if (warning != null)
+            {
+                warning.SetRemainingTime(remainingTime);
+            }
+
+            if (remainingTime > 0f)
+            {
+                continue;
+            }
+
+            platformSpawner.DespawnRecorded(replayEvent.objectId);
+            spawnedObjects.Remove(replayEvent.objectId);
         }
     }
 
@@ -154,11 +196,16 @@ public class CharacterBuildEventTrack : MonoBehaviour
         return index;
     }
 
-    private void ReplayBuildEvent(BuildReplayEventData replayEvent)
+    private void ReplayBuildEvent(BuildReplayEventData replayEvent, float timelineTime)
     {
         if (platformSpawner == null)
         {
             Debug.LogError($"{name}: CharacterBuildEventTrack needs a PlatformSpawner.");
+            return;
+        }
+
+        if (replayEvent.despawnTime > 0f && replayEvent.despawnTime <= timelineTime)
+        {
             return;
         }
 
@@ -180,6 +227,7 @@ public class CharacterBuildEventTrack : MonoBehaviour
 public struct BuildReplayEventData
 {
     public float time;
+    public float despawnTime;
     public string objectId;
     public PlatformSpawner.BuildType buildType;
     public Vector3 position;
