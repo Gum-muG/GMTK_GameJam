@@ -79,6 +79,15 @@ public class CharacterWorldEventTrack : MonoBehaviour
         isPlayingBack = false;
     }
 
+    public void RestartRecordingFrom(PlatformSpawner spawner, float timelineTime)
+    {
+        platformSpawner = spawner;
+        events.RemoveAll(replayEvent => replayEvent.time > timelineTime);
+        nextEventIndex = FindFirstEventAfter(timelineTime);
+        isRecording = true;
+        isPlayingBack = false;
+    }
+
     public void BeginPlayback(PlatformSpawner spawner, float startTime)
     {
         platformSpawner = spawner;
