@@ -4907,6 +4907,7 @@ GameObject:
   - component: {fileID: 6786557503895645650}
   - component: {fileID: 8051495980215544329}
   - component: {fileID: 2699609651572661910}
+  - component: {fileID: 1387880645821042120}
   m_Layer: 0
   m_Name: Ice
   m_TagString: Untagged
@@ -4965,7 +4966,6 @@ MonoBehaviour:
   movementState: 0
   coyoteTime: 0.03
   fallMultiplier: 2.5
-  clone: {fileID: 0}
   wallRunning: 0
 --- !u!114 &6307035683286417969
 MonoBehaviour:
@@ -5116,6 +5116,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterWorldEventTrack
   events: []
   deathMarkerPrefab: {fileID: 2014854396481473050, guid: fe02f07123395c94986cd06ca5c70149, type: 3}
+--- !u!114 &1387880645821042120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006632322674145177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ecdc9ed38cc94e92371e0281e08c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pause
+  pauseMenu: {fileID: 0}
 --- !u!1 &3867930617167815726
 GameObject:
   m_ObjectHideFlags: 0
@@ -5161,6 +5174,7 @@ GameObject:
   - component: {fileID: 3478335655073637505}
   - component: {fileID: 8838405300015351524}
   - component: {fileID: 8952996052314031123}
+  - component: {fileID: 5360994780647735558}
   m_Layer: 0
   m_Name: IceCamera
   m_TagString: MainCamera
@@ -5295,6 +5309,14 @@ MonoBehaviour:
   camHolder: {fileID: 3505368878041533843}
   wallRunHorizontalLimit: 60
   wallCameraOffset: 0.25
+--- !u!81 &5360994780647735558
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3919727774408802199}
+  m_Enabled: 1
 --- !u!1 &4167013621818407448
 GameObject:
   m_ObjectHideFlags: 0

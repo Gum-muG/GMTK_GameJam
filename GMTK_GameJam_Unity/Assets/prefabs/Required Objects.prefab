@@ -127,13 +127,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformSpawner
   currentBuildType: 0
-  platformPrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
+  platformPrefab: {fileID: 8282564032629583769, guid: 8538052569e623243b261afc6224a999, type: 3}
+  wallPrefab: {fileID: 9152010764137602676, guid: c309d8089bd1db44baa5fbf4ec05e0d1, type: 3}
   platformPreviewPrefab: {fileID: 9123307778859239741, guid: 0ca3a1c76615fb64287c72ab84d24118, type: 3}
   wallPreviewPrefab: {fileID: 1987798977602579163, guid: 1d34bc9ce0953e9449557c3fee9db45e, type: 3}
   previewLayerName: Preview
   groundLayerName: Ground
   wallLayerName: Wall
+  platformLifetime: 5
+  wallLifetime: 5
 --- !u!1 &6398531654693086957
 GameObject:
   m_ObjectHideFlags: 0

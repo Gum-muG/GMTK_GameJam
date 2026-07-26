@@ -4890,6 +4890,7 @@ GameObject:
   - component: {fileID: 2308392732051077849}
   - component: {fileID: 8417541681432714427}
   - component: {fileID: 2992804717314110098}
+  - component: {fileID: 8088910766112845626}
   m_Layer: 3
   m_Name: Fire
   m_TagString: Untagged
@@ -4986,7 +4987,6 @@ MonoBehaviour:
   movementState: 0
   coyoteTime: 0.03
   fallMultiplier: 2.5
-  clone: {fileID: 0}
   wallRunning: 0
 --- !u!114 &7160835728012817289
 MonoBehaviour:
@@ -5118,6 +5118,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimelineObject
   timelineId: 0
+--- !u!114 &8088910766112845626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920279370166423282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ecdc9ed38cc94e92371e0281e08c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pause
+  pauseMenu: {fileID: 0}
 --- !u!1 &4453874182994850456
 GameObject:
   m_ObjectHideFlags: 0
@@ -5226,6 +5239,7 @@ GameObject:
   - component: {fileID: 3506711165307328073}
   - component: {fileID: 7045022477727434929}
   - component: {fileID: 2123935322467623187}
+  - component: {fileID: 1183521653532575808}
   m_Layer: 3
   m_Name: FireCamera
   m_TagString: MainCamera
@@ -5361,6 +5375,14 @@ MonoBehaviour:
   camHolder: {fileID: 813477649169901427}
   wallRunHorizontalLimit: 60
   wallCameraOffset: 0.15
+--- !u!81 &1183521653532575808
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4660963469309390088}
+  m_Enabled: 1
 --- !u!1 &5097495604625459373
 GameObject:
   m_ObjectHideFlags: 0
