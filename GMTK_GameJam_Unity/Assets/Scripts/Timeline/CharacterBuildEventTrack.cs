@@ -137,12 +137,26 @@ public class CharacterBuildEventTrack : MonoBehaviour
 
         foreach (BuildReplayEventData replayEvent in events)
         {
-            if (replayEvent.despawnTime <= 0f || replayEvent.despawnTime > timelineTime)
+            if (replayEvent.despawnTime <= 0f)
             {
                 continue;
             }
 
-            if (!spawnedObjects.ContainsKey(replayEvent.objectId))
+            if (!spawnedObjects.TryGetValue(replayEvent.objectId, out GameObject spawnedObject))
+            {
+                continue;
+            }
+
+            float remainingTime = replayEvent.despawnTime - timelineTime;
+
+            PlatformDespawnWarning warning = spawnedObject.GetComponent<PlatformDespawnWarning>();
+
+            if (warning != null)
+            {
+                warning.SetRemainingTime(remainingTime);
+            }
+
+            if (remainingTime > 0f)
             {
                 continue;
             }

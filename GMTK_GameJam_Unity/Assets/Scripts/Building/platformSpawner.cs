@@ -24,8 +24,9 @@ public class PlatformSpawner : MonoBehaviour
     public string groundLayerName = "Ground";
     public string wallLayerName = "Wall";
 
-    [Header("Platform lifetime")]
+    [Header("Build lifetimes")]
     [Min(0f)] public float platformLifetime = 5f;
+    [Min(0f)] public float wallLifetime = 5f;
 
     private readonly Dictionary<string, GameObject> spawnedObjectsById = new Dictionary<string, GameObject>();
 
@@ -174,7 +175,7 @@ public class PlatformSpawner : MonoBehaviour
         Vector3 position = currentPreview.transform.position;
         Quaternion rotation = currentPreview.transform.rotation;
         BuildType placedType = currentBuildType;
-        float lifetime = placedType == BuildType.Platform ? platformLifetime : 0f;
+        float lifetime = GetBuildLifetime(placedType);
         
         string objectId = $"{placedType}_{nextBuildId++}";
 
@@ -225,4 +226,20 @@ public class PlatformSpawner : MonoBehaviour
             SetLayerRecursively(child.gameObject, layer);
         }
     }
+
+    private float GetBuildLifetime(BuildType buildType)
+    {
+        if (buildType == BuildType.Platform)
+        {
+            return platformLifetime;
+        }
+
+        if (buildType == BuildType.Wall)
+        {
+            return wallLifetime;
+        }
+
+        return 0f;
+    }
+
 }
