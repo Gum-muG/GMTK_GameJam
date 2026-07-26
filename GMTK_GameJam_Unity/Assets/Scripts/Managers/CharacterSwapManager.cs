@@ -60,6 +60,9 @@ public class CharacterSwapManager : MonoBehaviour
     private CharacterWorldEventTrack playbackWorldTrack;
 
     private PlayableCharacter activeCharacter;
+    private float initialTimeBudget;
+    private float currentSegmentStartTime;
+    private float currentSegmentStartBudget;
     private bool timelineRunning;
 
     private float iceTime;
@@ -94,6 +97,8 @@ public class CharacterSwapManager : MonoBehaviour
         }
 
         instance = this;
+
+        initialTimeBudget = timeBudget;
 
         ResolveEventTracks();
 
@@ -133,7 +138,6 @@ public class CharacterSwapManager : MonoBehaviour
 
         float previousTime = CurrentTime;
         float nextTime = previousTime + Time.fixedDeltaTime;
-        timeBudget -= Time.fixedDeltaTime;
 
         if (levelDuration > 0f)
         {
@@ -149,8 +153,9 @@ public class CharacterSwapManager : MonoBehaviour
             return;
         }
 
-        // Replay the counterpart world first, then record the resulting
-        // shared world into the active character's take.
+        timeBudget = Mathf.Max(0f, timeBudget - elapsedTime);
+
+        // Replay the counterpart world first, then record the resulting shared world into the active character's take.
         playbackTrack?.PlaybackStep(nextTime);
         playbackBuildTrack?.ProcessEventsUpTo(nextTime);
         playbackWorldTrack?.ProcessEventsUpTo(nextTime);
@@ -193,6 +198,9 @@ public class CharacterSwapManager : MonoBehaviour
         iceTime = 0f;
         fireTime = 0f;
         timelineRunning = true;
+        timeBudget = initialTimeBudget;
+        currentSegmentStartTime = 0f;
+        currentSegmentStartBudget = timeBudget;
 
         ClearAllSpawnedBuildObjects();
         EnemyReplayObject.ResetAllToStartingState();
@@ -302,6 +310,8 @@ public class CharacterSwapManager : MonoBehaviour
         recordingTrack = newRecordingTrack;
         recordingBuildTrack = newRecordingBuildTrack;
         recordingWorldTrack = newRecordingWorldTrack;
+        currentSegmentStartTime = resumeTime;
+        currentSegmentStartBudget = timeBudget;
 
         // Reconstruct construction from both character histories at the newly controlled character's saved absolute timeline position.
         RebuildWorldAt(resumeTime);
@@ -317,30 +327,38 @@ public class CharacterSwapManager : MonoBehaviour
             return;
         }
 
+        float restartTime = currentSegmentStartTime;
+
         timelineRunning = true;
-        SetCharacterTime(activeCharacter, 0f);
+        timeBudget = currentSegmentStartBudget;
+        SetCharacterTime(activeCharacter, restartTime);
 
         CharacterReplayTrack activeTrack = GetReplayTrack(activeCharacter);
         CharacterBuildEventTrack activeBuildTrack = GetBuildTrack(activeCharacter);
         CharacterWorldEventTrack activeWorldTrack = GetWorldTrack(activeCharacter);
+
         PlayableCharacter counterpartCharacter = GetOtherCharacter(activeCharacter);
+
         CharacterReplayTrack counterpartTrack = GetReplayTrack(counterpartCharacter);
         CharacterBuildEventTrack counterpartBuildTrack = GetBuildTrack(counterpartCharacter);
         CharacterWorldEventTrack counterpartWorldTrack = GetWorldTrack(counterpartCharacter);
 
-        ResetBodyForRecording(GetBody(activeCharacter));
+        EnsureCharacterRootActive(activeTrack);
 
-        activeTrack.BeginNewRecording();
-        activeBuildTrack.BeginNewRecording(platformSpawner);
-        activeWorldTrack.BeginNewRecording(platformSpawner);
+        activeTrack.RestartRecordingFrom(restartTime);
+        activeBuildTrack.RestartRecordingFrom(platformSpawner, restartTime);
+        activeWorldTrack.RestartRecordingFrom(platformSpawner, restartTime);
+
+        ResetBodyForRecording(GetBody(activeCharacter));
 
         if (counterpartTrack.HasRecording)
         {
+            EnsureCharacterRootActive(counterpartTrack);
             FreezeBodyForPlayback(GetBody(counterpartCharacter));
 
-            counterpartTrack.BeginPlayback(0f);
-            counterpartBuildTrack.BeginPlayback(platformSpawner, 0f);
-            counterpartWorldTrack.BeginPlayback(platformSpawner, 0f);
+            counterpartTrack.BeginPlayback(restartTime);
+            counterpartBuildTrack.BeginPlayback(platformSpawner, restartTime);
+            counterpartWorldTrack.BeginPlayback(platformSpawner, restartTime);
 
             playbackTrack = counterpartTrack;
             playbackBuildTrack = counterpartBuildTrack;
@@ -361,7 +379,7 @@ public class CharacterSwapManager : MonoBehaviour
         recordingBuildTrack = activeBuildTrack;
         recordingWorldTrack = activeWorldTrack;
 
-        RebuildWorldAt(0f);
+        RebuildWorldAt(restartTime);
         ApplyCharacterModes();
         ApplyEnemyMode();
     }

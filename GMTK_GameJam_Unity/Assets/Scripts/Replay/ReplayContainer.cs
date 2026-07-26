@@ -16,6 +16,16 @@ public class ReplayContainer : ScriptableObject
         m_snapshots.Add(snapshot);
     }
 
+    public void RemoveSnapshotsAfter(float timelineTime)
+    {
+        if (m_snapshots == null)
+        {
+            return;
+        }
+
+        m_snapshots.RemoveAll(snapshot => snapshot.frameTime > timelineTime);
+    }
+
     public bool GetSnapshot(int index, out SnapshotData data)
     {
         if (index >= m_snapshots.Count)

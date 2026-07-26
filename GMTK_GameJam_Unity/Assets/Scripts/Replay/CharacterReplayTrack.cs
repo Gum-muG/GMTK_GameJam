@@ -88,8 +88,6 @@ public class CharacterReplayTrack : MonoBehaviour
         HasRecording = true;
     }
 
-    // Resumes this character at its already-recorded timeline cursor.
-    // Existing snapshots are preserved.
     public void ResumeRecording(float timelineTime)
     {
         if (!HasRecording)
@@ -102,6 +100,22 @@ public class CharacterReplayTrack : MonoBehaviour
 
         snapshotAccumulator = 0f;
         RecordedDuration = Mathf.Max(RecordedDuration, timelineTime);
+        CurrentState = TrackState.Record;
+    }
+
+    public void RestartRecordingFrom(float timelineTime)
+    {
+        if (!HasRecording)
+        {
+            BeginNewRecording();
+            return;
+        }
+
+        EnsureContainer();
+        replayContainer.RemoveSnapshotsAfter(timelineTime);
+        RecordedDuration = timelineTime;
+        SeekTo(timelineTime);
+        snapshotAccumulator = 0f;
         CurrentState = TrackState.Record;
     }
 
