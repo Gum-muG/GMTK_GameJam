@@ -78,6 +78,9 @@ public class CharacterSwapManager : MonoBehaviour
     public bool IsTimelineRunning => timelineRunning;
     public PlayableCharacter ActiveCharacter => activeCharacter;
 
+    public bool fireReady = false;
+    public bool iceReady  = false;
+
     public Transform ActiveCharacterTransform
     {
         get
